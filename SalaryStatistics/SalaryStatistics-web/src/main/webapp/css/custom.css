@@ -1,0 +1,10 @@
+.header-holder {
+    height: 100px;
+    background: -webkit-linear-gradient(#006C48, #009966);
+    padding: 10px;
+    margin-bottom: 40px;
+}
+
+.header {
+    color: #eee;
+}
