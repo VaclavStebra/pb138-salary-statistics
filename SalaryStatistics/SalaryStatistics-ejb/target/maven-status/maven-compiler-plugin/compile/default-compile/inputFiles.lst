@@ -1,8 +1,7 @@
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\ValidationException.java
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\com\SectorManager.java
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\com\SectorManagerImpl.java
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\DBUtils.java
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\ServiceFailureException.java
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\com\Sector.java
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\IllegalEntityException.java
-C:\Users\ZyXEL\Desktop\SalaryStatistics\SalaryStatistics-ejb\src\main\java\com\NewSessionBean.java
+D:\Documents\01_Skola\04_semestr_jaro_2015\PB138_znackovaci_jazyky\project\pb138-salary-statistics\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\ValidationException.java
+D:\Documents\01_Skola\04_semestr_jaro_2015\PB138_znackovaci_jazyky\project\pb138-salary-statistics\SalaryStatistics\SalaryStatistics-ejb\src\main\java\dao\SectorManagerImpl.java
+D:\Documents\01_Skola\04_semestr_jaro_2015\PB138_znackovaci_jazyky\project\pb138-salary-statistics\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\IllegalEntityException.java
+D:\Documents\01_Skola\04_semestr_jaro_2015\PB138_znackovaci_jazyky\project\pb138-salary-statistics\SalaryStatistics\SalaryStatistics-ejb\src\main\java\dao\Sector.java
+D:\Documents\01_Skola\04_semestr_jaro_2015\PB138_znackovaci_jazyky\project\pb138-salary-statistics\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\ServiceFailureException.java
+D:\Documents\01_Skola\04_semestr_jaro_2015\PB138_znackovaci_jazyky\project\pb138-salary-statistics\SalaryStatistics\SalaryStatistics-ejb\src\main\java\common\DBUtils.java
+D:\Documents\01_Skola\04_semestr_jaro_2015\PB138_znackovaci_jazyky\project\pb138-salary-statistics\SalaryStatistics\SalaryStatistics-ejb\src\main\java\dao\SectorManager.java

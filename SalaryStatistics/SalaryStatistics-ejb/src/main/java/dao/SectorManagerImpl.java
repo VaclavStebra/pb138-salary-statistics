@@ -127,7 +127,7 @@ public class SectorManagerImpl implements SectorManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, country, year, averageSalary FROM Sector");
+                    "SELECT \"id\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Sector\"");
             return executeQueryForMultipleSectors(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all sectors from DB";

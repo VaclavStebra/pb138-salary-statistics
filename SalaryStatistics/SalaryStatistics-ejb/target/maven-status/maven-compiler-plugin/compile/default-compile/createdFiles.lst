@@ -1,3 +1,7 @@
-common\DBUtils.class
+dao\Sector.class
 common\IllegalEntityException.class
+dao\SectorManagerImpl.class
+common\DBUtils.class
+dao\SectorManager.class
+common\ValidationException.class
 common\ServiceFailureException.class
