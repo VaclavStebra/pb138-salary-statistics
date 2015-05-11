@@ -25,4 +25,6 @@ public interface SectorManager {
     void updateSector(Sector sector);
     
     List<Sector> findSectorsByName(String name);
+    
+    List<Sector> findSectorsByParameters(String name, String country, String year);
 }

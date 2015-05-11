@@ -23,12 +23,11 @@ import javax.sql.DataSource;
  *
  * @author Tomas Milota
  */
-public class SectorManagerImpl implements SectorManager {
-    private WeakHashMap<Long, Sector> cacheId = new WeakHashMap<>();
-    private WeakHashMap<String, List<Sector>> cacheName = new WeakHashMap<>();
+public class ClassificationManagerImpl implements ClassificationManager {
+    private WeakHashMap<Long, Classification> cacheId = new WeakHashMap<>();
     
     private static final Logger logger = Logger.getLogger(
-            SectorManagerImpl.class.getName());
+            ClassificationManagerImpl.class.getName());
 
     private DataSource dataSource;
 
@@ -43,12 +42,12 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public void createSector(Sector sector) {
+    public void createClassification(Classification classification) {
         checkDataSource();
-        validate(sector);
+        validate(classification);
         
-        if (sector.getId() != null) {
-            throw new IllegalEntityException("sector id is already set");
+        if (classification.getId() != null) {
+            throw new IllegalEntityException("classification id is already set");
         }
         Connection conn = null;
         PreparedStatement st = null;
@@ -60,22 +59,22 @@ public class SectorManagerImpl implements SectorManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Sector (name, country, year, averageSalary) VALUES (?,?,?,?)",
+                    "INSERT INTO Classification (name, country, year, averageSalary) VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
-            st.setString(1, sector.getName());
-            st.setString(2, sector.getCountry());
-            st.setString(3, sector.getYear());
-            st.setDouble(4, sector.getAverageSalary());
+            st.setString(1, classification.getName());
+            st.setString(2, classification.getCountry());
+            st.setString(3, classification.getYear());
+            st.setDouble(4, classification.getAverageSalary());
            
             int count = st.executeUpdate();
-            DBUtils.checkUpdatesCount(count, sector, true);
+            DBUtils.checkUpdatesCount(count, classification, true);
 
             Long id = DBUtils.getId(st.getGeneratedKeys());
             // room continues as "known to system"
-            sector.setId(id);
+            classification.setId(id);
             conn.commit();
         } catch (SQLException ex) {
-            String msg = "Error when inserting sector into db";
+            String msg = "Error when inserting classification into db";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -85,13 +84,13 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public void deleteSector(Sector sector) {
+    public void deleteClassification(Classification classification) {
         checkDataSource();
-        if (sector == null) {
-            throw new IllegalArgumentException("sector is null");
+        if (classification == null) {
+            throw new IllegalArgumentException("classification is null");
         }
-        if (sector.getId() == null) {
-            throw new IllegalEntityException("sector id is null");
+        if (classification.getId() == null) {
+            throw new IllegalEntityException("classification id is null");
         }
         Connection conn = null;
         PreparedStatement st = null;
@@ -101,15 +100,15 @@ public class SectorManagerImpl implements SectorManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);
             st = conn.prepareStatement(
-                    "DELETE FROM Sector WHERE id=?"
+                    "DELETE FROM Classification WHERE id=?"
             );
 
-            st.setLong(1, sector.getId());
+            st.setLong(1, classification.getId());
             int count = st.executeUpdate();
-            DBUtils.checkUpdatesCount(count, sector, false);
+            DBUtils.checkUpdatesCount(count, classification, false);
             conn.commit();
         } catch (SQLException ex) {
-            String msg = "Error when deleting sector from the db";
+            String msg = "Error when deleting classification from the db";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -119,17 +118,17 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public List<Sector> findAllSectors() {
+    public List<Classification> findAllClassifications() {
         checkDataSource();
         Connection conn = null;
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT \"id\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Sector\"");
-            return executeQueryForMultipleSectors(st);
+                    "SELECT id, name, country, year, averageSalary FROM Classification");
+            return executeQueryForMultipleClassifications(st);
         } catch (SQLException ex) {
-            String msg = "Error when getting all sectors from DB";
+            String msg = "Error when getting all classifications from DB";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -138,7 +137,7 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public Sector findSectorById(Long id) {
+    public Classification findClassificationById(Long id) {
         if(cacheId.containsKey(id)){
             return cacheId.get(id);
         }
@@ -153,15 +152,15 @@ public class SectorManagerImpl implements SectorManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT id, name, country, year, averageSalary FROM Sector WHERE id = ?");
+            st = conn.prepareStatement("SELECT id, name, country, year, averageSalary FROM Classification WHERE id = ?");
             st.setLong(1, id);
             
-            Sector result = executeQueryForSingleSector(st);
+            Classification result = executeQueryForSingleClassification(st);
             cacheId.put(id, result);
             
             return result;
         } catch (SQLException ex) {
-            String msg = "Error when getting sector with id = " + id + " from DB";
+            String msg = "Error when getting classification with id = " + id + " from DB";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -170,12 +169,12 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public void updateSector(Sector sector) {
+    public void updateClassification(Classification classification) {
         checkDataSource();
-        validate(sector);
+        validate(classification);
         
-        if (sector.getId() == null) {
-            throw new IllegalEntityException("sector id is null");
+        if (classification.getId() == null) {
+            throw new IllegalEntityException("classification id is null");
         }        
         Connection conn = null;
         PreparedStatement st = null;
@@ -185,22 +184,21 @@ public class SectorManagerImpl implements SectorManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);   
             st = conn.prepareStatement(
-                    "UPDATE Sector SET name=?, country=?, year=?, averageSalary=? WHERE id=?"
+                    "UPDATE Classification SET name=?, country=?, year=?, averageSalary=? WHERE id=?"
             );
-            st.setString(1, sector.getName());
-            st.setString(2, sector.getCountry());
-            st.setString(3, sector.getYear());
-            st.setDouble(4, sector.getAverageSalary());
-            st.setLong(5, sector.getId());
+            st.setString(1, classification.getName());
+            st.setString(2, classification.getCountry());
+            st.setString(3, classification.getYear());
+            st.setDouble(4, classification.getAverageSalary());
+            st.setLong(5, classification.getId());
 
             int count = st.executeUpdate();
-            DBUtils.checkUpdatesCount(count, sector, false);
+            DBUtils.checkUpdatesCount(count, classification, false);
             conn.commit();
             
-            cacheId.remove(sector.getId());
-            cacheName.remove(sector.getName());
+            cacheId.remove(classification.getId());
         } catch (SQLException ex) {
-            String msg = "Error when updating sector in the db";
+            String msg = "Error when updating classification in the db";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -208,44 +206,13 @@ public class SectorManagerImpl implements SectorManager {
             DBUtils.closeQuietly(conn, st);
         }      
     }
-
-    @Override
-    public List<Sector> findSectorsByName(String name) {
-        if(cacheName.containsKey(name))
-            return cacheName.get(name);
-        
-        checkDataSource();
-        
-        if (name == null) {
-            throw new IllegalArgumentException("name is null");
-        }
-        
-        Connection conn = null;
-        PreparedStatement st = null;
-        try {
-            conn = dataSource.getConnection();
-            st = conn.prepareStatement(
-                    "SELECT id, name, country, year, averageSalary FROM Sector WHERE name = ?");
-            st.setString(1, name);
-            List<Sector> result = executeQueryForMultipleSectors(st);
-            
-            cacheName.put(name, result);
-            return result;
-        } catch (SQLException ex) {
-            String msg = "Error when getting sector with name = " + name + " from DB";
-            logger.log(Level.SEVERE, msg, ex);
-            throw new ServiceFailureException(msg, ex);
-        } finally {
-            DBUtils.closeQuietly(conn, st);
-        }
-    }
     
     @Override
-    public List<Sector> findSectorsByParameters(String name, String country, String year){
+    public List<Classification> findClassificationsByParameters(String name, String country, String year){
         checkDataSource();
         
         StringBuilder statement = new StringBuilder(
-                "SELECT id, name, country, year, averageSalary FROM Sector WHERE ");
+                "SELECT id, name, country, year, averageSalary FROM Classification WHERE ");
         
         int numOfParameters = 0;
         
@@ -269,18 +236,18 @@ public class SectorManagerImpl implements SectorManager {
             numOfParameters++;
         }
         if(numOfParameters == 0)
-            return findAllSectors();
+            return findAllClassifications();
         
         Connection conn = null;
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(statement.toString());
-            List<Sector> result = executeQueryForMultipleSectors(st);
+            List<Classification> result = executeQueryForMultipleClassifications(st);
             
             return result;
         } catch (SQLException ex) {
-            String msg = "Error when getting sectors with parameters from DB";
+            String msg = "Error when getting classifications with parameters from DB";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -288,35 +255,35 @@ public class SectorManagerImpl implements SectorManager {
         }
     }
 
-    private void validate(Sector sector) {
-        if (sector == null) {
-            throw new IllegalArgumentException("sector is null");
+    private void validate(Classification classification) {
+        if (classification == null) {
+            throw new IllegalArgumentException("classification is null");
         }
-        if (sector.getName() == null) {
+        if (classification.getName() == null) {
             throw new ValidationException("name is null");
         }
-        if (sector.getCountry() == null) {
+        if (classification.getCountry() == null) {
             throw new ValidationException("country is null");
         }
-        if (sector.getYear() == null) {
+        if (classification.getYear() == null) {
             throw new ValidationException("year is null");
         }
-        if (sector.getAverageSalary() == null) {
+        if (classification.getAverageSalary() == null) {
             throw new ValidationException("average salary is null");
         }
     }
 
-    private List<Sector> executeQueryForMultipleSectors(PreparedStatement st) throws SQLException {
+    private List<Classification> executeQueryForMultipleClassifications(PreparedStatement st) throws SQLException {
         ResultSet rs = st.executeQuery();
-        List<Sector> result = new ArrayList<>();
+        List<Classification> result = new ArrayList<>();
         while (rs.next()) {
-            result.add(rowToSector(rs));
+            result.add(rowToClassification(rs));
         }
         return result;    
     }
 
-    private Sector rowToSector(ResultSet rs) throws SQLException {
-        Sector result = new Sector();
+    private Classification rowToClassification(ResultSet rs) throws SQLException {
+        Classification result = new Classification();
         result.setId(rs.getLong("id"));
         result.setName(rs.getString("name"));
         result.setCountry(rs.getString("country"));
@@ -325,13 +292,13 @@ public class SectorManagerImpl implements SectorManager {
         return result;
     }
 
-    private Sector executeQueryForSingleSector(PreparedStatement st) throws SQLException {
+    private Classification executeQueryForSingleClassification(PreparedStatement st) throws SQLException {
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
-            Sector result = rowToSector(rs);                
+            Classification result = rowToClassification(rs);                
             if (rs.next()) {
                 throw new ServiceFailureException(
-                        "Internal integrity error: more sectors with the same id found!");
+                        "Internal integrity error: more classifications with the same id found!");
             }
             return result;
         } else {

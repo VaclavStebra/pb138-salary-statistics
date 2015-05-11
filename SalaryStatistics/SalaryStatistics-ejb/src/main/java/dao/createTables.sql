@@ -6,7 +6,7 @@ CREATE TABLE "Sector"
 "name" VARCHAR(40) NOT NULL,
 "country" VARCHAR(20) NOT NULL,
 "year" VARCHAR(10) NOT NULL,
-"averageSalary" INT NOT NULL
+"averageSalary" DOUBLE NOT NULL
 );
 
 CREATE TABLE "Age"
@@ -19,7 +19,7 @@ CREATE TABLE "Age"
 "country" VARCHAR(20) NOT NULL,
 "year" VARCHAR(10) NOT NULL,
 "sex" VARCHAR(10),
-"averageSalary" INT NOT NULL
+"averageSalary" DOUBLE NOT NULL
 );
 
 CREATE TABLE "Education"
@@ -31,7 +31,7 @@ CREATE TABLE "Education"
 "country" VARCHAR(20) NOT NULL,
 "year" VARCHAR(10) NOT NULL,
 "sex" VARCHAR(10),
-"averageSalary" INT NOT NULL
+"averageSalary" DOUBLE NOT NULL
 );
 
 CREATE TABLE "Region"
@@ -43,7 +43,7 @@ CREATE TABLE "Region"
 "country" VARCHAR(20) NOT NULL,
 "year" VARCHAR(10) NOT NULL,
 "sex" VARCHAR(10),
-"averageSalary" INT NOT NULL
+"averageSalary" DOUBLE NOT NULL
 );
 
 CREATE TABLE "Classification"
@@ -54,5 +54,5 @@ CREATE TABLE "Classification"
 "name" VARCHAR(40) NOT NULL,
 "country" VARCHAR(20) NOT NULL,
 "year" VARCHAR(10) NOT NULL,
-"averageSalary" INT NOT NULL
+"averageSalary" DOUBLE NOT NULL
 );

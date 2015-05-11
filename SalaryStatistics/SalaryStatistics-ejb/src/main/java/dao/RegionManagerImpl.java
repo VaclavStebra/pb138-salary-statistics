@@ -23,12 +23,11 @@ import javax.sql.DataSource;
  *
  * @author Tomas Milota
  */
-public class SectorManagerImpl implements SectorManager {
-    private WeakHashMap<Long, Sector> cacheId = new WeakHashMap<>();
-    private WeakHashMap<String, List<Sector>> cacheName = new WeakHashMap<>();
+public class RegionManagerImpl implements RegionManager {
+    private WeakHashMap<Long, Region> cacheId = new WeakHashMap<>();
     
     private static final Logger logger = Logger.getLogger(
-            SectorManagerImpl.class.getName());
+            RegionManagerImpl.class.getName());
 
     private DataSource dataSource;
 
@@ -43,12 +42,12 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public void createSector(Sector sector) {
+    public void createRegion(Region region) {
         checkDataSource();
-        validate(sector);
+        validate(region);
         
-        if (sector.getId() != null) {
-            throw new IllegalEntityException("sector id is already set");
+        if (region.getId() != null) {
+            throw new IllegalEntityException("region id is already set");
         }
         Connection conn = null;
         PreparedStatement st = null;
@@ -60,22 +59,23 @@ public class SectorManagerImpl implements SectorManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Sector (name, country, year, averageSalary) VALUES (?,?,?,?)",
+                    "INSERT INTO Region (name, country, year, sex, averageSalary) VALUES (?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
-            st.setString(1, sector.getName());
-            st.setString(2, sector.getCountry());
-            st.setString(3, sector.getYear());
-            st.setDouble(4, sector.getAverageSalary());
+            st.setString(1, region.getName());
+            st.setString(2, region.getCountry());
+            st.setString(3, region.getYear());
+            st.setString(4, region.getSex());
+            st.setDouble(5, region.getAverageSalary());
            
             int count = st.executeUpdate();
-            DBUtils.checkUpdatesCount(count, sector, true);
+            DBUtils.checkUpdatesCount(count, region, true);
 
             Long id = DBUtils.getId(st.getGeneratedKeys());
             // room continues as "known to system"
-            sector.setId(id);
+            region.setId(id);
             conn.commit();
         } catch (SQLException ex) {
-            String msg = "Error when inserting sector into db";
+            String msg = "Error when inserting region into db";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -85,13 +85,13 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public void deleteSector(Sector sector) {
+    public void deleteRegion(Region region) {
         checkDataSource();
-        if (sector == null) {
-            throw new IllegalArgumentException("sector is null");
+        if (region == null) {
+            throw new IllegalArgumentException("region is null");
         }
-        if (sector.getId() == null) {
-            throw new IllegalEntityException("sector id is null");
+        if (region.getId() == null) {
+            throw new IllegalEntityException("region id is null");
         }
         Connection conn = null;
         PreparedStatement st = null;
@@ -101,15 +101,15 @@ public class SectorManagerImpl implements SectorManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);
             st = conn.prepareStatement(
-                    "DELETE FROM Sector WHERE id=?"
+                    "DELETE FROM Region WHERE id=?"
             );
 
-            st.setLong(1, sector.getId());
+            st.setLong(1, region.getId());
             int count = st.executeUpdate();
-            DBUtils.checkUpdatesCount(count, sector, false);
+            DBUtils.checkUpdatesCount(count, region, false);
             conn.commit();
         } catch (SQLException ex) {
-            String msg = "Error when deleting sector from the db";
+            String msg = "Error when deleting region from the db";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -119,17 +119,17 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public List<Sector> findAllSectors() {
+    public List<Region> findAllRegions() {
         checkDataSource();
         Connection conn = null;
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT \"id\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Sector\"");
-            return executeQueryForMultipleSectors(st);
+                    "SELECT id, name, country, year, sex, averageSalary FROM Region");
+            return executeQueryForMultipleRegions(st);
         } catch (SQLException ex) {
-            String msg = "Error when getting all sectors from DB";
+            String msg = "Error when getting all regions from DB";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -138,7 +138,7 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public Sector findSectorById(Long id) {
+    public Region findRegionById(Long id) {
         if(cacheId.containsKey(id)){
             return cacheId.get(id);
         }
@@ -153,15 +153,15 @@ public class SectorManagerImpl implements SectorManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT id, name, country, year, averageSalary FROM Sector WHERE id = ?");
+            st = conn.prepareStatement("SELECT id, name, country, year, sex, averageSalary FROM Region WHERE id = ?");
             st.setLong(1, id);
             
-            Sector result = executeQueryForSingleSector(st);
+            Region result = executeQueryForSingleRegion(st);
             cacheId.put(id, result);
             
             return result;
         } catch (SQLException ex) {
-            String msg = "Error when getting sector with id = " + id + " from DB";
+            String msg = "Error when getting region with id = " + id + " from DB";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -170,12 +170,12 @@ public class SectorManagerImpl implements SectorManager {
     }
 
     @Override
-    public void updateSector(Sector sector) {
+    public void updateRegion(Region region) {
         checkDataSource();
-        validate(sector);
+        validate(region);
         
-        if (sector.getId() == null) {
-            throw new IllegalEntityException("sector id is null");
+        if (region.getId() == null) {
+            throw new IllegalEntityException("region id is null");
         }        
         Connection conn = null;
         PreparedStatement st = null;
@@ -185,22 +185,22 @@ public class SectorManagerImpl implements SectorManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);   
             st = conn.prepareStatement(
-                    "UPDATE Sector SET name=?, country=?, year=?, averageSalary=? WHERE id=?"
+                    "UPDATE Region SET name=?, country=?, year=?, sex=? averageSalary=? WHERE id=?"
             );
-            st.setString(1, sector.getName());
-            st.setString(2, sector.getCountry());
-            st.setString(3, sector.getYear());
-            st.setDouble(4, sector.getAverageSalary());
-            st.setLong(5, sector.getId());
+            st.setString(1, region.getName());
+            st.setString(2, region.getCountry());
+            st.setString(3, region.getYear());
+            st.setString(4, region.getSex());
+            st.setDouble(5, region.getAverageSalary());
+            st.setLong(6, region.getId());
 
             int count = st.executeUpdate();
-            DBUtils.checkUpdatesCount(count, sector, false);
+            DBUtils.checkUpdatesCount(count, region, false);
             conn.commit();
             
-            cacheId.remove(sector.getId());
-            cacheName.remove(sector.getName());
+            cacheId.remove(region.getId());
         } catch (SQLException ex) {
-            String msg = "Error when updating sector in the db";
+            String msg = "Error when updating region in the db";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -208,44 +208,13 @@ public class SectorManagerImpl implements SectorManager {
             DBUtils.closeQuietly(conn, st);
         }      
     }
-
-    @Override
-    public List<Sector> findSectorsByName(String name) {
-        if(cacheName.containsKey(name))
-            return cacheName.get(name);
-        
-        checkDataSource();
-        
-        if (name == null) {
-            throw new IllegalArgumentException("name is null");
-        }
-        
-        Connection conn = null;
-        PreparedStatement st = null;
-        try {
-            conn = dataSource.getConnection();
-            st = conn.prepareStatement(
-                    "SELECT id, name, country, year, averageSalary FROM Sector WHERE name = ?");
-            st.setString(1, name);
-            List<Sector> result = executeQueryForMultipleSectors(st);
-            
-            cacheName.put(name, result);
-            return result;
-        } catch (SQLException ex) {
-            String msg = "Error when getting sector with name = " + name + " from DB";
-            logger.log(Level.SEVERE, msg, ex);
-            throw new ServiceFailureException(msg, ex);
-        } finally {
-            DBUtils.closeQuietly(conn, st);
-        }
-    }
     
     @Override
-    public List<Sector> findSectorsByParameters(String name, String country, String year){
+    public List<Region> findRegionsByParameters(String name, String country, String year, String sex){
         checkDataSource();
         
         StringBuilder statement = new StringBuilder(
-                "SELECT id, name, country, year, averageSalary FROM Sector WHERE ");
+                "SELECT id, name, country, year, sex, averageSalary FROM Region WHERE ");
         
         int numOfParameters = 0;
         
@@ -268,19 +237,26 @@ public class SectorManagerImpl implements SectorManager {
             statement.append(year);
             numOfParameters++;
         }
+        if(sex != null){
+            if(numOfParameters != 0)
+                statement.append(" AND ");
+            statement.append("sex = ");
+            statement.append(sex);
+            numOfParameters++;
+        }
         if(numOfParameters == 0)
-            return findAllSectors();
+            return findAllRegions();
         
         Connection conn = null;
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(statement.toString());
-            List<Sector> result = executeQueryForMultipleSectors(st);
+            List<Region> result = executeQueryForMultipleRegions(st);
             
             return result;
         } catch (SQLException ex) {
-            String msg = "Error when getting sectors with parameters from DB";
+            String msg = "Error when getting regions with parameters from DB";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -288,50 +264,51 @@ public class SectorManagerImpl implements SectorManager {
         }
     }
 
-    private void validate(Sector sector) {
-        if (sector == null) {
-            throw new IllegalArgumentException("sector is null");
+    private void validate(Region region) {
+        if (region == null) {
+            throw new IllegalArgumentException("region is null");
         }
-        if (sector.getName() == null) {
+        if (region.getName() == null) {
             throw new ValidationException("name is null");
         }
-        if (sector.getCountry() == null) {
+        if (region.getCountry() == null) {
             throw new ValidationException("country is null");
         }
-        if (sector.getYear() == null) {
+        if (region.getYear() == null) {
             throw new ValidationException("year is null");
         }
-        if (sector.getAverageSalary() == null) {
+        if (region.getAverageSalary() == null) {
             throw new ValidationException("average salary is null");
         }
     }
 
-    private List<Sector> executeQueryForMultipleSectors(PreparedStatement st) throws SQLException {
+    private List<Region> executeQueryForMultipleRegions(PreparedStatement st) throws SQLException {
         ResultSet rs = st.executeQuery();
-        List<Sector> result = new ArrayList<>();
+        List<Region> result = new ArrayList<>();
         while (rs.next()) {
-            result.add(rowToSector(rs));
+            result.add(rowToRegion(rs));
         }
         return result;    
     }
 
-    private Sector rowToSector(ResultSet rs) throws SQLException {
-        Sector result = new Sector();
+    private Region rowToRegion(ResultSet rs) throws SQLException {
+        Region result = new Region();
         result.setId(rs.getLong("id"));
         result.setName(rs.getString("name"));
         result.setCountry(rs.getString("country"));
         result.setYear(rs.getString("year"));
+        result.setSex(rs.getString("sex"));
         result.setAverageSalary(rs.getDouble("averageSalary"));
         return result;
     }
 
-    private Sector executeQueryForSingleSector(PreparedStatement st) throws SQLException {
+    private Region executeQueryForSingleRegion(PreparedStatement st) throws SQLException {
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
-            Sector result = rowToSector(rs);                
+            Region result = rowToRegion(rs);                
             if (rs.next()) {
                 throw new ServiceFailureException(
-                        "Internal integrity error: more sectors with the same id found!");
+                        "Internal integrity error: more regions with the same id found!");
             }
             return result;
         } else {

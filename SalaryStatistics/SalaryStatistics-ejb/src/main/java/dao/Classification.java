@@ -10,12 +10,12 @@ package dao;
  *
  * @author Tomas Milota
  */
-public class Sector {
+public class Classification {
     private Long id;
     private String country, year, name;
     private Double averageSalary;
 
-    public Sector(Long id, String name, String country, String year, double averageSalary) {
+    public Classification(Long id, String country, String year, String name, Double averageSalary) {
         this.id = id;
         this.country = country;
         this.year = year;
@@ -23,7 +23,8 @@ public class Sector {
         this.averageSalary = averageSalary;
     }
 
-    public Sector() {}
+    public Classification() {
+    }
 
     public Long getId() {
         return id;
@@ -61,7 +62,9 @@ public class Sector {
         return averageSalary;
     }
 
-    public void setAverageSalary(double averageSalary) {
+    public void setAverageSalary(Double averageSalary) {
         this.averageSalary = averageSalary;
     }
+    
+    
 }
