@@ -24,7 +24,6 @@ import javax.sql.DataSource;
  * @author Tomas Milota
  */
 public class SectorManagerImpl implements SectorManager {
-    
     private WeakHashMap<Long, Sector> cacheId = new WeakHashMap<>();
     private WeakHashMap<String, List<Sector>> cacheName = new WeakHashMap<>();
     
@@ -49,7 +48,7 @@ public class SectorManagerImpl implements SectorManager {
         validate(sector);
         
         if (sector.getId() != null) {
-            throw new IllegalEntityException("guest id is already set");
+            throw new IllegalEntityException("sector id is already set");
         }
         Connection conn = null;
         PreparedStatement st = null;
@@ -61,12 +60,12 @@ public class SectorManagerImpl implements SectorManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Sector (name, country, year, averageSalary) VALUES (?,?,?)",
+                    "INSERT INTO Sector (name, country, year, averageSalary) VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, sector.getName());
             st.setString(2, sector.getCountry());
             st.setString(3, sector.getYear());
-            st.setInt(4, sector.getAverageSalary());
+            st.setDouble(4, sector.getAverageSalary());
            
             int count = st.executeUpdate();
             DBUtils.checkUpdatesCount(count, sector, true);
@@ -76,7 +75,7 @@ public class SectorManagerImpl implements SectorManager {
             sector.setId(id);
             conn.commit();
         } catch (SQLException ex) {
-            String msg = "Error when inserting grave into db";
+            String msg = "Error when inserting sector into db";
             logger.log(Level.SEVERE, msg, ex);
             throw new ServiceFailureException(msg, ex);
         } finally {
@@ -191,7 +190,7 @@ public class SectorManagerImpl implements SectorManager {
             st.setString(1, sector.getName());
             st.setString(2, sector.getCountry());
             st.setString(3, sector.getYear());
-            st.setInt(4, sector.getAverageSalary());
+            st.setDouble(4, sector.getAverageSalary());
             st.setLong(5, sector.getId());
 
             int count = st.executeUpdate();
@@ -240,10 +239,58 @@ public class SectorManagerImpl implements SectorManager {
             DBUtils.closeQuietly(conn, st);
         }
     }
+    
+    @Override
+    public List<Sector> findSectorsByParameters(String name, String country, String year){
+        checkDataSource();
+        
+        StringBuilder statement = new StringBuilder(
+                "SELECT id, name, country, year, averageSalary FROM Sector WHERE ");
+        
+        int numOfParameters = 0;
+        
+        if(name != null){
+            statement.append("name = ");
+            statement.append(name);
+            numOfParameters++;
+        }
+        if(country != null){
+            if(numOfParameters != 0)
+                statement.append(" AND ");
+            statement.append("country = ");
+            statement.append(country);
+            numOfParameters++;
+        }
+        if(year != null){
+            if(numOfParameters != 0)
+                statement.append(" AND ");
+            statement.append("year = ");
+            statement.append(year);
+            numOfParameters++;
+        }
+        if(numOfParameters == 0)
+            return findAllSectors();
+        
+        Connection conn = null;
+        PreparedStatement st = null;
+        try {
+            conn = dataSource.getConnection();
+            st = conn.prepareStatement(statement.toString());
+            List<Sector> result = executeQueryForMultipleSectors(st);
+            
+            return result;
+        } catch (SQLException ex) {
+            String msg = "Error when getting sectors with parameters from DB";
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
+        } finally {
+            DBUtils.closeQuietly(conn, st);
+        }
+    }
 
     private void validate(Sector sector) {
         if (sector == null) {
-            throw new IllegalArgumentException("guest is null");
+            throw new IllegalArgumentException("sector is null");
         }
         if (sector.getName() == null) {
             throw new ValidationException("name is null");
@@ -274,7 +321,7 @@ public class SectorManagerImpl implements SectorManager {
         result.setName(rs.getString("name"));
         result.setCountry(rs.getString("country"));
         result.setYear(rs.getString("year"));
-        result.setAverageSalary(rs.getInt("averageSalary"));
+        result.setAverageSalary(rs.getDouble("averageSalary"));
         return result;
     }
 

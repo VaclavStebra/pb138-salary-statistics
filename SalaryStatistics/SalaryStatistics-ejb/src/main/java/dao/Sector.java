@@ -13,9 +13,9 @@ package dao;
 public class Sector {
     private Long id;
     private String country, year, name;
-    private Integer averageSalary;
+    private Double averageSalary;
 
-    public Sector(Long id, String name, String country, String year, int averageSalary) {
+    public Sector(Long id, String name, String country, String year, double averageSalary) {
         this.id = id;
         this.country = country;
         this.year = year;
@@ -57,11 +57,11 @@ public class Sector {
         this.name = name;
     }
 
-    public Integer getAverageSalary() {
+    public Double getAverageSalary() {
         return averageSalary;
     }
 
-    public void setAverageSalary(int averageSalary) {
+    public void setAverageSalary(double averageSalary) {
         this.averageSalary = averageSalary;
     }
 }
