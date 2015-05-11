@@ -6,7 +6,16 @@ import dao.SectorManager;
 import dao.SectorManagerImpl;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -52,9 +61,14 @@ public class SectorServlet extends HttpServlet {
         manager.setDataSource(dataSource);
         String action = request.getPathInfo();
         switch (action) {
-            case "/options":
-                getOptions();
-                break;
+            case "/options": {
+                try {
+                    getOptions(manager, request, response);
+                } catch (ParserConfigurationException ex) {
+                    Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            break;
             case "/tabledata": {
                 try {
                     getData(manager, request, response);
@@ -72,16 +86,79 @@ public class SectorServlet extends HttpServlet {
 
     private void getData(SectorManager manager, HttpServletRequest request, HttpServletResponse response) throws IOException, ParserConfigurationException {
         List<Sector> sectors = manager.findAllSectors();
-        // TODO filter by parameters
-
+        String[] years = request.getParameterValues("year");
+        String[] names = request.getParameterValues("name");
+        sectors = filterByYear(sectors, years);
+        sectors = filterByName(sectors, names);
         returnTableData(sectors, response);
     }
 
-    private void getOptions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void getOptions(SectorManager manager, HttpServletRequest request, HttpServletResponse response) throws ParserConfigurationException {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element rootElement = doc.createElement("form");
+        rootElement.setAttribute("method", "GET");
+        rootElement.setAttribute("action", request.getContextPath() + "/sector");
+        rootElement.setAttribute("data-ajax-form", "true");
+
+        Element div = doc.createElement("div");
+        div.setAttribute("class", "form-group");
+
+        Set<String> years = new HashSet<>();
+        Set<String> names = new HashSet<>();
+        List<Sector> sectors = manager.findAllSectors();
+        for (Sector sector : sectors) {
+            years.add(sector.getYear());
+            names.add(sector.getName());
+        }
+
+        for (String year : years) {
+            Element label = doc.createElement("label");
+            label.setAttribute("class", "checkbox-inline");
+            Element input = doc.createElement("input");
+            input.setAttribute("type", "checkbox");
+            input.setAttribute("name", "year");
+            input.setAttribute("checked", "");
+            input.setAttribute("value", year);
+            input.setTextContent(year);
+            label.appendChild(input);
+            div.appendChild(label);
+        }
+        
+        div.appendChild(doc.createElement("br"));
+        
+        for (String name : names) {
+            Element label = doc.createElement("label");
+            label.setAttribute("class", "checkbox-inline");
+            Element input = doc.createElement("input");
+            input.setAttribute("type", "checkbox");
+            input.setAttribute("name", "name");
+            input.setAttribute("checked", "");
+            input.setAttribute("value", name);
+            input.setTextContent(name);
+            label.appendChild(input);
+            div.appendChild(label);
+        }
+
+        rootElement.appendChild(div);
+
+        Element submit = doc.createElement("input");
+        submit.setAttribute("type", "submit");
+        submit.setAttribute("class", "btn btn-primary");
+        submit.setAttribute("value", "Zobrazit");
+        rootElement.appendChild(submit);
+
+        doc.appendChild(rootElement);
+        writeDocumentToResponse(doc, response);
     }
 
     private void returnTableData(List<Sector> data, HttpServletResponse response) throws IOException, ParserConfigurationException {
+        SortedSet<String> years = new TreeSet<>();
+        for (Sector sector : data) {
+            years.add(sector.getYear());
+        }        
+        
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
         Document doc = builder.newDocument();
@@ -92,26 +169,43 @@ public class SectorServlet extends HttpServlet {
         Element th = doc.createElement("th");
         th.setTextContent("Nazev odvetvi");
         theadRow.appendChild(th);
-        th = doc.createElement("th");
-        th.setTextContent("Rok");
-        theadRow.appendChild(th);
-        th = doc.createElement("th");
-        th.setTextContent("Plat");
-        theadRow.appendChild(th);
+        for (String year : years) {
+            th = doc.createElement("th");
+            th.setTextContent(year);
+            theadRow.appendChild(th);
+        }
         thead.appendChild(theadRow);
 
         Element tbody = doc.createElement("tbody");
+        Map<String, List<Sector>> sectors = new HashMap<>();
         for (Sector sector : data) {
+            if (sectors.containsKey(sector.getName())) {
+                sectors.get(sector.getName()).add(sector);
+            } else {
+                List<Sector> s = new ArrayList<>();
+                s.add(sector);
+                sectors.put(sector.getName(), s);
+            }
+        }
+        for (Entry<String, List<Sector>> sector : sectors.entrySet()) {
             Element tr = doc.createElement("tr");
             Element td = doc.createElement("td");
-            td.setTextContent(sector.getName());
+            td.setTextContent(sector.getKey());
             tr.appendChild(td);
-            td = doc.createElement("td");
-            td.setTextContent(sector.getYear());
-            tr.appendChild(td);
-            td = doc.createElement("td");
-            td.setTextContent(sector.getAverageSalary().toString());
-            tr.appendChild(td);
+            List<Sector> values = sector.getValue();
+            values.sort(new Comparator<Sector>() {
+
+                @Override
+                public int compare(Sector o1, Sector o2) {
+                    return o1.getYear().compareTo(o2.getYear());
+                }
+                
+            });
+            for (Sector s : values) {
+                td = doc.createElement("td");
+                td.setTextContent(s.getAverageSalary().toString());
+                tr.appendChild(td);
+            }
             tbody.appendChild(tr);
         }
 
@@ -123,7 +217,7 @@ public class SectorServlet extends HttpServlet {
     }
 
     private void writeDocumentToResponse(Document doc, HttpServletResponse response) throws TransformerFactoryConfigurationError {
-         try {
+        try {
             StringWriter sw = new StringWriter();
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
@@ -136,14 +230,48 @@ public class SectorServlet extends HttpServlet {
             Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void getJsonData(SectorManager manager, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Sector> data = manager.findAllSectors();
-        // TODO filter data
-        
+        String[] years = request.getParameterValues("year");
+        String[] names = request.getParameterValues("name");
+        data = filterByYear(data, years);
+        data = filterByName(data, names);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.getWriter().write(new Gson().toJson(data));
+    }
+    
+    private List<Sector> filterByYear(List<Sector> sectors, String[] years) {
+        List<Sector> filtered = new ArrayList<>();
+        if (years != null) {
+            for (Sector sector : sectors) {
+                for (String year : years) {
+                    if (sector.getYear().equals(year)) {
+                        filtered.add(sector);
+                    }
+                }
+            }
+            return filtered;
+        } else {
+            return sectors;
+        }
+    }
+    
+    private List<Sector> filterByName(List<Sector> sectors, String[] names) {
+        List<Sector> filtered = new ArrayList<>();
+        if (names != null) {
+            for (Sector sector : sectors) {
+                for (String name : names) {
+                    if (sector.getName().equals(name)) {
+                        filtered.add(sector);
+                    }
+                }
+            }
+            return filtered;
+        } else {
+            return sectors;
+        }
     }
 
 }

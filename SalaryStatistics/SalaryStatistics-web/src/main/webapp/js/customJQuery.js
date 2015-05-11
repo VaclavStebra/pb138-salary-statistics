@@ -3,45 +3,81 @@ $(document).ready(function () {
      $("#first-select").html($(this).text() + " <span class=\"caret\"></span>");
      });*/
     $("[data-category-sector]").click(function () {
+        $("#options").html("");
+        $("#table-data").html("");
+        $("#graph-data").html("");
         var url = $(this).data("category-sector");
-        $.get(url + "/tabledata", function(data) {
-            $("#table-data").html(data);
-        });
-        $.get(url + "/data", function(data) {
-            showSectorDataInGraph(data)
+        $.get(url + "/options", function (data) {
+            $("#options").html(data);
+            $("[data-ajax-form]").submit(function (e) {;
+                $("#table-data").html("");
+                $("#graph-data").html("");
+                e.preventDefault();
+                var url = $(this).attr("action");
+                $.get(url + "/tabledata?" + $(this).serialize(), function (data) {
+                    $("#table-data").html(data);
+                });
+                $.get(url + "/data?" + $(this).serialize(), function (data) {
+                    showSectorDataInGraph(data);
+                });
+            });
         });
     });
+
+
     var showSectorDataInGraph = function (data) {
-        var categories = [];
-        var seriesValues = [];
+        var yearsSet = {};
+        var namesSet = {};
+        var series = [];
         for (var index in data) {
             var entry = data[index];
-            categories.push(entry.name);
-            seriesValues.push(entry.averageSalary);
+            yearsSet[entry.year] = true;
+            if ( ! (entry.name in namesSet)) {
+                namesSet[entry.name] = [];           
+            }
+            namesSet[entry.name].push(entry);
         }
-        var series = {
-            name: "",
-            data: seriesValues
-        };
+        var years = [];
+        for (var index in yearsSet) {
+            years.push(index);
+        }
+        for (var index in namesSet) {
+            var category = namesSet[index];
+            var serie = {
+                name: "",
+                data: []
+            };
+            var compare = function (a, b) {
+                if (a.year < b.year)
+                    return -1;
+                if (a.year > b.year)
+                    return 1;
+                return 0;
+            };
+
+            category.sort(compare);
+            for (var entryIndex in category) {
+                serie.name = category[entryIndex].name;
+                serie.data.push(category[entryIndex].averageSalary);
+            }
+            series.push(serie);
+        }
         $("#graph-data").highcharts({
             chart: {
-                type: 'bar'
+                type: 'column'
             },
             title: {
                 text: 'Plat v odvetvich'
             },
             xAxis: {
-                categories: categories
+                categories: years
             },
             yAxis: {
                 title: {
                     text: 'Plat [CZK]'
                 }
             },
-            series: [{
-                    name: 'Plat',
-                    data: seriesValues
-                }]
+            series: series
         });
-    }
+    };
 });
