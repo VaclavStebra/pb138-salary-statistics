@@ -12,11 +12,12 @@ package dao;
  */
 public class Classification {
     private Long id;
-    private String country, year, name;
+    private String country, year, name, code;
     private Double averageSalary;
 
-    public Classification(Long id, String country, String year, String name, Double averageSalary) {
+    public Classification(Long id, String code, String country, String year, String name, Double averageSalary) {
         this.id = id;
+        this.code = code;
         this.country = country;
         this.year = year;
         this.name = name;
@@ -65,6 +66,12 @@ public class Classification {
     public void setAverageSalary(Double averageSalary) {
         this.averageSalary = averageSalary;
     }
-    
-    
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

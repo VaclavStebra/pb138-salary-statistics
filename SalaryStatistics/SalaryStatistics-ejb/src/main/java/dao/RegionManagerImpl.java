@@ -59,7 +59,7 @@ public class RegionManagerImpl implements RegionManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Region (name, country, year, sex, averageSalary) VALUES (?,?,?,?,?)",
+                    "INSERT INTO \"Region\" (\"name\", \"country\", \"year\", \"sex\", \"averageSalary\") VALUES (?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, region.getName());
             st.setString(2, region.getCountry());
@@ -101,7 +101,7 @@ public class RegionManagerImpl implements RegionManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);
             st = conn.prepareStatement(
-                    "DELETE FROM Region WHERE id=?"
+                    "DELETE FROM \"Region\" WHERE \"id\"=?"
             );
 
             st.setLong(1, region.getId());
@@ -126,7 +126,7 @@ public class RegionManagerImpl implements RegionManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, country, year, sex, averageSalary FROM Region");
+                    "SELECT \"id\", \"name\", \"country\", \"year\", \"sex\", \"averageSalary\" FROM \"Region\"");
             return executeQueryForMultipleRegions(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all regions from DB";
@@ -153,7 +153,8 @@ public class RegionManagerImpl implements RegionManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT id, name, country, year, sex, averageSalary FROM Region WHERE id = ?");
+            st = conn.prepareStatement("SELECT \"id\", \"name\", \"country\", \"year\", \"sex\", \"averageSalary\""
+                    + " FROM \"Region\" WHERE \"id\" = ?");
             st.setLong(1, id);
             
             Region result = executeQueryForSingleRegion(st);
@@ -185,7 +186,7 @@ public class RegionManagerImpl implements RegionManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);   
             st = conn.prepareStatement(
-                    "UPDATE Region SET name=?, country=?, year=?, sex=? averageSalary=? WHERE id=?"
+                "UPDATE \"Region\" SET \"name\"=?, \"country\"=?, \"year\"=?, \"sex\"=? ,\"averageSalary\"=? WHERE \"id\"=?"
             );
             st.setString(1, region.getName());
             st.setString(2, region.getCountry());
@@ -214,33 +215,33 @@ public class RegionManagerImpl implements RegionManager {
         checkDataSource();
         
         StringBuilder statement = new StringBuilder(
-                "SELECT id, name, country, year, sex, averageSalary FROM Region WHERE ");
+                "SELECT \"id\", \"name\", \"country\", \"year\", \"sex\", \"averageSalary\" FROM \"Region\" WHERE ");
         
         int numOfParameters = 0;
         
         if(name != null){
-            statement.append("name = ");
+            statement.append("\"name\" = ");
             statement.append(name);
             numOfParameters++;
         }
         if(country != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("country = ");
+            statement.append("\"country\" = ");
             statement.append(country);
             numOfParameters++;
         }
         if(year != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("year = ");
+            statement.append("\"year\" = ");
             statement.append(year);
             numOfParameters++;
         }
         if(sex != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("sex = ");
+            statement.append("\"sex\" = ");
             statement.append(sex);
             numOfParameters++;
         }

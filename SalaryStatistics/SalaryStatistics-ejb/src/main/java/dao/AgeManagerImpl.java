@@ -59,7 +59,7 @@ public class AgeManagerImpl implements AgeManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Age (ageFrom, ageTo, country, year, sex, averageSalary) VALUES (?,?,?,?,?,?)",
+                    "INSERT INTO \"Age\" (\"ageFrom\", \"ageTo\", \"country\", \"year\", \"sex\", \"averageSalary\") VALUES (?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, age.getAgeFrom());
             st.setInt(2, age.getAgeTo());
@@ -102,7 +102,7 @@ public class AgeManagerImpl implements AgeManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);
             st = conn.prepareStatement(
-                    "DELETE FROM Age WHERE id=?"
+                    "DELETE FROM \"Age\" WHERE \"id\"=?"
             );
 
             st.setLong(1, age.getId());
@@ -127,7 +127,7 @@ public class AgeManagerImpl implements AgeManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, ageFrom, ageTo, country, year, sex, averageSalary FROM Age");
+                    "SELECT \"id\", \"ageFrom\", \"ageTo\", \"country\", \"year\", \"sex\", \"averageSalary\" FROM \"Age\"");
             return executeQueryForMultipleAges(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all ages from DB";
@@ -154,7 +154,8 @@ public class AgeManagerImpl implements AgeManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT id, ageFrom, ageTo, country, year, sex, averageSalary FROM Age WHERE id = ?");
+            st = conn.prepareStatement("SELECT \"id\", \"ageFrom\", \"ageTo\", \"country\", \"year\", \"sex\", \"averageSalary\""
+                    + " FROM \"Age\" WHERE \"id\" = ?");
             st.setLong(1, id);
             
             Age result = executeQueryForSingleAge(st);
@@ -186,7 +187,7 @@ public class AgeManagerImpl implements AgeManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);   
             st = conn.prepareStatement(
-                    "UPDATE Age SET ageFrom=?, ageTo=?, country=?, year=?, sex=?, averageSalary=? WHERE id=?"
+                    "UPDATE \"Age\" SET \"ageFrom\"=?, \"ageTo\"=?, \"country\"=?, \"year\"=?, \"sex\"=?, \"averageSalary\"=? WHERE \"id\"=?"
             );
             st.setInt(1, age.getAgeFrom());
             st.setInt(2, age.getAgeTo());
@@ -216,40 +217,40 @@ public class AgeManagerImpl implements AgeManager {
         checkDataSource();
         
         StringBuilder statement = new StringBuilder(
-                "SELECT id, ageFrom, ageTo, country, year, sex, averageSalary FROM Age WHERE ");
+                "SELECT \"id\", \"ageFrom\", \"ageTo\", \"country\", \"year\", \"sex\", \"averageSalary\" FROM \"Age\" WHERE ");
         
         int numOfParameters = 0;
         
         if(ageFrom != null){
-            statement.append("ageFrom = ");
+            statement.append("\"ageFrom\" = ");
             statement.append(ageFrom);
             numOfParameters++;
         }
         if(ageTo != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("ageTo = ");
+            statement.append("\"ageTo\" = ");
             statement.append(ageTo);
             numOfParameters++;
         }
         if(country != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("country = ");
+            statement.append("\"country\" = ");
             statement.append(country);
             numOfParameters++;
         }
         if(year != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("year = ");
+            statement.append("\"year\" = ");
             statement.append(year);
             numOfParameters++;
         }
         if(sex != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("sex = ");
+            statement.append("\"sex\" = ");
             statement.append(sex);
             numOfParameters++;
         }
