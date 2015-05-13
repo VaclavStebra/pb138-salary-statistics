@@ -66,7 +66,7 @@ public class SectorServlet extends HttpServlet {
             case "/": {
                 try {
                     Document options = getOptions(manager, request);
-                    Document tableData = getData(manager, request);
+                    Document tableData = getData(manager, request, false);
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
                     request.getRequestDispatcher("/template.jsp").forward(request, response);
@@ -85,7 +85,7 @@ public class SectorServlet extends HttpServlet {
             break;
             case "/tabledata": {
                 try {
-                    Document tableData = getData(manager, request);
+                    Document tableData = getData(manager, request, true);
                     writeDocumentToResponse(tableData, response);
                 } catch (ParserConfigurationException ex) {
                     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -102,14 +102,16 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
-    private Document getData(SectorManager manager, HttpServletRequest request) throws IOException, ParserConfigurationException {
+    private Document getData(SectorManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
         List<Sector> sectors = manager.findAllSectors();
-        String[] years = request.getParameterValues("year");
-        String[] code = request.getParameterValues("code");
-        String[] countries = request.getParameterValues("country");
-        sectors = filterByYear(sectors, years);
-        sectors = filterByCode(sectors, code);
-        sectors = filterByCountry(sectors, countries);
+        if (filter) {
+            String[] years = request.getParameterValues("year");
+            String[] code = request.getParameterValues("code");
+            String[] countries = request.getParameterValues("country");
+            sectors = filterByYear(sectors, years);
+            sectors = filterByCode(sectors, code);
+            sectors = filterByCountry(sectors, countries);
+        }
         return returnTableData(sectors);
     }
 
@@ -298,12 +300,16 @@ public class SectorServlet extends HttpServlet {
 
     private String getJsonData(SectorManager manager, HttpServletRequest request) throws IOException {
         List<Sector> data = manager.findAllSectors();
-        String[] years = request.getParameterValues("year");
-        String[] codes = request.getParameterValues("code");
-        String[] countries = request.getParameterValues("country");
-        data = filterByYear(data, years);
-        data = filterByCode(data, codes);
-        data = filterByCountry(data, countries);
+        String filterStr = request.getParameter("filter");
+        boolean filter = !(filterStr != null && !Boolean.getBoolean(filterStr));
+        if (filter) {
+            String[] years = request.getParameterValues("year");
+            String[] codes = request.getParameterValues("code");
+            String[] countries = request.getParameterValues("country");
+            data = filterByYear(data, years);
+            data = filterByCode(data, codes);
+            data = filterByCountry(data, countries);
+        }
         return new Gson().toJson(data);
     }
 
@@ -319,7 +325,7 @@ public class SectorServlet extends HttpServlet {
             }
             return filtered;
         } else {
-            return sectors;
+            return filtered;
         }
     }
 
@@ -335,7 +341,7 @@ public class SectorServlet extends HttpServlet {
             }
             return filtered;
         } else {
-            return sectors;
+            return filtered;
         }
     }
     
@@ -351,7 +357,7 @@ public class SectorServlet extends HttpServlet {
             }
             return filtered;
         } else {
-            return sectors;
+            return filtered;
         }
     }
 
