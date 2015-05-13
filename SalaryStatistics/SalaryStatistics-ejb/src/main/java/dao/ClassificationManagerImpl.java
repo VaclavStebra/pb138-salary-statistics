@@ -59,12 +59,13 @@ public class ClassificationManagerImpl implements ClassificationManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Classification (name, country, year, averageSalary) VALUES (?,?,?,?)",
+                    "INSERT INTO \"Classification\" (\"code\", \"name\", \"country\", \"year\", \"averageSalary\") VALUES (?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
-            st.setString(1, classification.getName());
-            st.setString(2, classification.getCountry());
-            st.setString(3, classification.getYear());
-            st.setDouble(4, classification.getAverageSalary());
+            st.setString(1, classification.getCode());
+            st.setString(2, classification.getName());
+            st.setString(3, classification.getCountry());
+            st.setString(4, classification.getYear());
+            st.setDouble(5, classification.getAverageSalary());
            
             int count = st.executeUpdate();
             DBUtils.checkUpdatesCount(count, classification, true);
@@ -100,7 +101,7 @@ public class ClassificationManagerImpl implements ClassificationManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);
             st = conn.prepareStatement(
-                    "DELETE FROM Classification WHERE id=?"
+                    "DELETE FROM \"Classification\" WHERE \"id\"=?"
             );
 
             st.setLong(1, classification.getId());
@@ -125,7 +126,7 @@ public class ClassificationManagerImpl implements ClassificationManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, country, year, averageSalary FROM Classification");
+                    "SELECT \"id\", \"code\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Classification\"");
             return executeQueryForMultipleClassifications(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all classifications from DB";
@@ -152,7 +153,8 @@ public class ClassificationManagerImpl implements ClassificationManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT id, name, country, year, averageSalary FROM Classification WHERE id = ?");
+            st = conn.prepareStatement("SELECT \"id\", \"code\", \"name\", \"country\", \"year\", \"averageSalary\" "
+                    + "FROM \"Classification\" WHERE \"id\" = ?");
             st.setLong(1, id);
             
             Classification result = executeQueryForSingleClassification(st);
@@ -184,13 +186,14 @@ public class ClassificationManagerImpl implements ClassificationManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);   
             st = conn.prepareStatement(
-                    "UPDATE Classification SET name=?, country=?, year=?, averageSalary=? WHERE id=?"
+                "UPDATE \"Classification\" SET \"name\"=?, \"country\"=?, \"year\"=?, \"averageSalary\"=?, \"code\"=? WHERE \"id\"=?"
             );
             st.setString(1, classification.getName());
             st.setString(2, classification.getCountry());
             st.setString(3, classification.getYear());
             st.setDouble(4, classification.getAverageSalary());
-            st.setLong(5, classification.getId());
+            st.setString(5, classification.getCode());
+            st.setLong(6, classification.getId());
 
             int count = st.executeUpdate();
             DBUtils.checkUpdatesCount(count, classification, false);
@@ -212,26 +215,26 @@ public class ClassificationManagerImpl implements ClassificationManager {
         checkDataSource();
         
         StringBuilder statement = new StringBuilder(
-                "SELECT id, name, country, year, averageSalary FROM Classification WHERE ");
+                "SELECT \"id\", \"code\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Classification\" WHERE ");
         
         int numOfParameters = 0;
         
         if(name != null){
-            statement.append("name = ");
+            statement.append("\"name\" = ");
             statement.append(name);
             numOfParameters++;
         }
         if(country != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("country = ");
+            statement.append("\"country\" = ");
             statement.append(country);
             numOfParameters++;
         }
         if(year != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("year = ");
+            statement.append("\"year\" = ");
             statement.append(year);
             numOfParameters++;
         }
@@ -259,6 +262,9 @@ public class ClassificationManagerImpl implements ClassificationManager {
         if (classification == null) {
             throw new IllegalArgumentException("classification is null");
         }
+        if (classification.getCode() == null) {
+            throw new ValidationException("code is null");
+        }
         if (classification.getName() == null) {
             throw new ValidationException("name is null");
         }
@@ -285,6 +291,7 @@ public class ClassificationManagerImpl implements ClassificationManager {
     private Classification rowToClassification(ResultSet rs) throws SQLException {
         Classification result = new Classification();
         result.setId(rs.getLong("id"));
+        result.setCode(rs.getString("code"));
         result.setName(rs.getString("name"));
         result.setCountry(rs.getString("country"));
         result.setYear(rs.getString("year"));

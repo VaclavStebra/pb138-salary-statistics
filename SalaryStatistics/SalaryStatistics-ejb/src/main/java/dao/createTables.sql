@@ -3,6 +3,7 @@ CREATE TABLE "Sector"
 "id" INT not null primary key
     GENERATED ALWAYS AS IDENTITY
     (START WITH 1, INCREMENT BY 1),
+"code" VARCHAR(1) NOT NULL,
 "name" VARCHAR(40) NOT NULL,
 "country" VARCHAR(20) NOT NULL,
 "year" VARCHAR(10) NOT NULL,
@@ -51,6 +52,7 @@ CREATE TABLE "Classification"
 "id" INT not null primary key
     GENERATED ALWAYS AS IDENTITY
     (START WITH 1, INCREMENT BY 1),
+"code" VARCHAR(2) NOT NULL,
 "name" VARCHAR(40) NOT NULL,
 "country" VARCHAR(20) NOT NULL,
 "year" VARCHAR(10) NOT NULL,

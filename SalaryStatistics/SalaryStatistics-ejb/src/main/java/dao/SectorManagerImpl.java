@@ -60,12 +60,13 @@ public class SectorManagerImpl implements SectorManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Sector (name, country, year, averageSalary) VALUES (?,?,?,?)",
+                    "INSERT INTO \"Sector\" (\"code\", \"name\", \"country\", \"year\", \"averageSalary\") VALUES (?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
-            st.setString(1, sector.getName());
-            st.setString(2, sector.getCountry());
-            st.setString(3, sector.getYear());
-            st.setDouble(4, sector.getAverageSalary());
+            st.setString(1, sector.getCode());
+            st.setString(2, sector.getName());
+            st.setString(3, sector.getCountry());
+            st.setString(4, sector.getYear());
+            st.setDouble(5, sector.getAverageSalary());
            
             int count = st.executeUpdate();
             DBUtils.checkUpdatesCount(count, sector, true);
@@ -101,7 +102,7 @@ public class SectorManagerImpl implements SectorManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);
             st = conn.prepareStatement(
-                    "DELETE FROM Sector WHERE id=?"
+                    "DELETE FROM \"Sector\" WHERE \"id\"=?"
             );
 
             st.setLong(1, sector.getId());
@@ -126,7 +127,7 @@ public class SectorManagerImpl implements SectorManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT \"id\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Sector\"");
+                    "SELECT \"id\", \"code\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Sector\"");
             return executeQueryForMultipleSectors(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all sectors from DB";
@@ -153,7 +154,8 @@ public class SectorManagerImpl implements SectorManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT id, name, country, year, averageSalary FROM Sector WHERE id = ?");
+            st = conn.prepareStatement("SELECT \"id\", \"code\", \"name\", \"country\", \"year\", \"averageSalary\" "
+                    + "FROM \"Sector\" WHERE \"id\" = ?");
             st.setLong(1, id);
             
             Sector result = executeQueryForSingleSector(st);
@@ -185,13 +187,14 @@ public class SectorManagerImpl implements SectorManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);   
             st = conn.prepareStatement(
-                    "UPDATE Sector SET name=?, country=?, year=?, averageSalary=? WHERE id=?"
+                    "UPDATE \"Sector\" SET \"code\"=?, \"name\"=?, \"country\"=?, \"year\"=?, \"averageSalary\"=? WHERE \"id\"=?"
             );
-            st.setString(1, sector.getName());
-            st.setString(2, sector.getCountry());
-            st.setString(3, sector.getYear());
-            st.setDouble(4, sector.getAverageSalary());
-            st.setLong(5, sector.getId());
+            st.setString(1, sector.getCode());
+            st.setString(2, sector.getName());
+            st.setString(3, sector.getCountry());
+            st.setString(4, sector.getYear());
+            st.setDouble(5, sector.getAverageSalary());
+            st.setLong(6, sector.getId());
 
             int count = st.executeUpdate();
             DBUtils.checkUpdatesCount(count, sector, false);
@@ -225,7 +228,7 @@ public class SectorManagerImpl implements SectorManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, country, year, averageSalary FROM Sector WHERE name = ?");
+                    "SELECT \"id\", \"code\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Sector\" WHERE \"name\" = ?");
             st.setString(1, name);
             List<Sector> result = executeQueryForMultipleSectors(st);
             
@@ -245,26 +248,26 @@ public class SectorManagerImpl implements SectorManager {
         checkDataSource();
         
         StringBuilder statement = new StringBuilder(
-                "SELECT id, name, country, year, averageSalary FROM Sector WHERE ");
+                "SELECT \"id\", \"code\", \"name\", \"country\", \"year\", \"averageSalary\" FROM \"Sector\" WHERE ");
         
         int numOfParameters = 0;
         
         if(name != null){
-            statement.append("name = ");
+            statement.append("\"name\" = ");
             statement.append(name);
             numOfParameters++;
         }
         if(country != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("country = ");
+            statement.append("\"country\" = ");
             statement.append(country);
             numOfParameters++;
         }
         if(year != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("year = ");
+            statement.append("\"year\" = ");
             statement.append(year);
             numOfParameters++;
         }
@@ -292,6 +295,9 @@ public class SectorManagerImpl implements SectorManager {
         if (sector == null) {
             throw new IllegalArgumentException("sector is null");
         }
+        if (sector.getCode() == null) {
+            throw new ValidationException("code is null");
+        }
         if (sector.getName() == null) {
             throw new ValidationException("name is null");
         }
@@ -318,6 +324,7 @@ public class SectorManagerImpl implements SectorManager {
     private Sector rowToSector(ResultSet rs) throws SQLException {
         Sector result = new Sector();
         result.setId(rs.getLong("id"));
+        result.setCode(rs.getString("code"));
         result.setName(rs.getString("name"));
         result.setCountry(rs.getString("country"));
         result.setYear(rs.getString("year"));

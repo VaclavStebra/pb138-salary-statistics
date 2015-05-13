@@ -59,7 +59,7 @@ public class EducationManagerImpl implements EducationManager {
             conn.setAutoCommit(false);
 
             st = conn.prepareStatement(
-                    "INSERT INTO Education (degree, country, year, sex, averageSalary) VALUES (?,?,?,?,?)",
+                    "INSERT INTO \"Education\" (\"degree\", \"country\", \"year\", \"sex\", \"averageSalary\") VALUES (?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, education.getDegree());
             st.setString(2, education.getCountry());
@@ -101,7 +101,7 @@ public class EducationManagerImpl implements EducationManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);
             st = conn.prepareStatement(
-                    "DELETE FROM Education WHERE id=?"
+                    "DELETE FROM \"Education\" WHERE \"id\"=?"
             );
 
             st.setLong(1, education.getId());
@@ -126,7 +126,7 @@ public class EducationManagerImpl implements EducationManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, degree, country, year, sex, averageSalary FROM Education");
+                    "SELECT \"id\", \"degree\", \"country\", \"year\", \"sex\", \"averageSalary\" FROM \"Education\"");
             return executeQueryForMultipleEducations(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all educations from DB";
@@ -153,7 +153,8 @@ public class EducationManagerImpl implements EducationManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT id, degree, country, year, sex, averageSalary FROM Education WHERE id = ?");
+            st = conn.prepareStatement("SELECT \"id\", \"degree\", \"country\", \"year\", \"sex\", \"averageSalary\" "
+                    + "FROM \"Education\" WHERE \"id\" = ?");
             st.setLong(1, id);
             
             Education result = executeQueryForSingleEducation(st);
@@ -185,7 +186,7 @@ public class EducationManagerImpl implements EducationManager {
             // method DBUtils.closeQuietly(...) 
             conn.setAutoCommit(false);   
             st = conn.prepareStatement(
-                    "UPDATE Education SET degree=?, country=?, year=?, sex=? averageSalary=? WHERE id=?"
+                    "UPDATE \"Education\" SET \"degree\"=?, \"country\"=?, \"year\"=?, \"sex\"=? \"averageSalary\"=? WHERE \"id\"=?"
             );
             st.setString(1, education.getDegree());
             st.setString(2, education.getCountry());
@@ -214,33 +215,33 @@ public class EducationManagerImpl implements EducationManager {
         checkDataSource();
         
         StringBuilder statement = new StringBuilder(
-                "SELECT id, degree, country, year, sex, averageSalary FROM Education WHERE ");
+                "SELECT \"id\", \"degree\", \"country\", \"year\", \"sex\", \"averageSalary\" FROM \"Education\" WHERE ");
         
         int numOfParameters = 0;
         
         if(degree != null){
-            statement.append("degree = ");
+            statement.append("\"degree\"= ");
             statement.append(degree);
             numOfParameters++;
         }
         if(country != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("country = ");
+            statement.append("\"country\" = ");
             statement.append(country);
             numOfParameters++;
         }
         if(year != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("year = ");
+            statement.append("\"year\" = ");
             statement.append(year);
             numOfParameters++;
         }
         if(sex != null){
             if(numOfParameters != 0)
                 statement.append(" AND ");
-            statement.append("sex = ");
+            statement.append("\"sex\" = ");
             statement.append(sex);
             numOfParameters++;
         }
