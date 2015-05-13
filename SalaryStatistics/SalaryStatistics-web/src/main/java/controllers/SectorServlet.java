@@ -28,6 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -41,7 +42,7 @@ import org.w3c.dom.Element;
  *
  * @author Václav Štěbra <422186@mail.muni.cz>
  */
-@WebServlet(urlPatterns = {"/sector/*"})
+@WebServlet(urlPatterns = {"", "/sector/*"})
 public class SectorServlet extends HttpServlet {
 
     @Override
@@ -52,6 +53,7 @@ public class SectorServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+        request.setCharacterEncoding("UTF-8");
         SectorManagerImpl manager = new SectorManagerImpl();
         BasicDataSource dataSource = new BasicDataSource();
         // TODO move db config to properties file
@@ -61,9 +63,21 @@ public class SectorServlet extends HttpServlet {
         manager.setDataSource(dataSource);
         String action = request.getPathInfo();
         switch (action) {
+            case "/": {
+                try {
+                    Document options = getOptions(manager, request);
+                    Document tableData = getData(manager, request);
+                    request.setAttribute("options", documentToString(options));
+                    request.setAttribute("table", documentToString(tableData));
+                    request.getRequestDispatcher("/template.jsp").forward(request, response);
+                } catch (ParserConfigurationException | TransformerException | TransformerFactoryConfigurationError | IllegalArgumentException ex) {
+                    Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             case "/options": {
                 try {
-                    getOptions(manager, request, response);
+                    Document options = getOptions(manager, request);
+                    writeDocumentToResponse(options, response);
                 } catch (ParserConfigurationException ex) {
                     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -71,29 +85,33 @@ public class SectorServlet extends HttpServlet {
             break;
             case "/tabledata": {
                 try {
-                    getData(manager, request, response);
+                    Document tableData = getData(manager, request);
+                    writeDocumentToResponse(tableData, response);
                 } catch (ParserConfigurationException ex) {
                     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 break;
             }
             case "/data": {
-                getJsonData(manager, request, response);
+                String data = getJsonData(manager, request);
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.getWriter().write(data);
             }
             break;
         }
     }
 
-    private void getData(SectorManager manager, HttpServletRequest request, HttpServletResponse response) throws IOException, ParserConfigurationException {
+    private Document getData(SectorManager manager, HttpServletRequest request) throws IOException, ParserConfigurationException {
         List<Sector> sectors = manager.findAllSectors();
         String[] years = request.getParameterValues("year");
         String[] names = request.getParameterValues("name");
         sectors = filterByYear(sectors, years);
         sectors = filterByName(sectors, names);
-        returnTableData(sectors, response);
+        return returnTableData(sectors);
     }
 
-    private void getOptions(SectorManager manager, HttpServletRequest request, HttpServletResponse response) throws ParserConfigurationException {
+    private Document getOptions(SectorManager manager, HttpServletRequest request) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
         Document doc = builder.newDocument();
@@ -125,9 +143,9 @@ public class SectorServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-        
+
         div.appendChild(doc.createElement("br"));
-        
+
         for (String name : names) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -150,15 +168,15 @@ public class SectorServlet extends HttpServlet {
         rootElement.appendChild(submit);
 
         doc.appendChild(rootElement);
-        writeDocumentToResponse(doc, response);
+        return doc;
     }
 
-    private void returnTableData(List<Sector> data, HttpServletResponse response) throws IOException, ParserConfigurationException {
+    private Document returnTableData(List<Sector> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
         for (Sector sector : data) {
             years.add(sector.getYear());
-        }        
-        
+        }
+
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
         Document doc = builder.newDocument();
@@ -199,11 +217,12 @@ public class SectorServlet extends HttpServlet {
                 public int compare(Sector o1, Sector o2) {
                     return o1.getYear().compareTo(o2.getYear());
                 }
-                
+
             });
             for (Sector s : values) {
                 td = doc.createElement("td");
-                td.setTextContent(s.getAverageSalary().toString());
+                Double salary = s.getAverageSalary();
+                td.setTextContent(String.valueOf(salary));
                 tr.appendChild(td);
             }
             tbody.appendChild(tr);
@@ -212,36 +231,38 @@ public class SectorServlet extends HttpServlet {
         rootElement.appendChild(thead).appendChild(tbody);
         rootElement.setAttribute("class", "table");
         doc.appendChild(rootElement);
-
-        writeDocumentToResponse(doc, response);
+        return doc;
     }
 
     private void writeDocumentToResponse(Document doc, HttpServletResponse response) throws TransformerFactoryConfigurationError {
         try {
-            StringWriter sw = new StringWriter();
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer transformer = tf.newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.transform(new DOMSource(doc), new StreamResult(sw));
+            String dataToWrite = documentToString(doc);
             response.setCharacterEncoding("UTF-8");
-            String dataToWrite = sw.toString();
             response.getWriter().write(dataToWrite);
         } catch (IllegalArgumentException | TransformerException | IOException ex) {
             Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void getJsonData(SectorManager manager, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
+        StringWriter sw = new StringWriter();
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.transform(new DOMSource(doc), new StreamResult(sw));
+        String dataToWrite = sw.toString();
+        return dataToWrite;
+    }
+
+    private String getJsonData(SectorManager manager, HttpServletRequest request) throws IOException {
         List<Sector> data = manager.findAllSectors();
         String[] years = request.getParameterValues("year");
         String[] names = request.getParameterValues("name");
         data = filterByYear(data, years);
         data = filterByName(data, names);
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        response.getWriter().write(new Gson().toJson(data));
+        return new Gson().toJson(data);
     }
-    
+
     private List<Sector> filterByYear(List<Sector> sectors, String[] years) {
         List<Sector> filtered = new ArrayList<>();
         if (years != null) {
@@ -257,7 +278,7 @@ public class SectorServlet extends HttpServlet {
             return sectors;
         }
     }
-    
+
     private List<Sector> filterByName(List<Sector> sectors, String[] names) {
         List<Sector> filtered = new ArrayList<>();
         if (names != null) {

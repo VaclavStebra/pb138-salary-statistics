@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html;charset=utf-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="cs-CZ">
@@ -34,8 +34,12 @@
                     </ul>
                 </div>
             </nav>
-            <div id="options"></div>
-            <div id="table-data"></div>
+            <div id="options">
+                <c:out value="${options}" escapeXml="false" />
+            </div>
+            <div id="table-data">
+                <c:out value="${table}" escapeXml="false" />
+            </div>
             <div id="graph-data" style="width:100%; height:400px;"></div>
         </div>
 

@@ -1,28 +1,19 @@
 $(document).ready(function () {
-    /*$(".dropdown li a").click(function(){
-     $("#first-select").html($(this).text() + " <span class=\"caret\"></span>");
-     });*/
-    $("[data-category-sector]").click(function () {
-        $("#options").html("");
-        $("#table-data").html("");
-        $("#graph-data").html("");
-        var url = $(this).data("category-sector");
-        $.get(url + "/options", function (data) {
-            $("#options").html(data);
-            $("[data-ajax-form]").submit(function (e) {;
-                $("#table-data").html("");
-                $("#graph-data").html("");
-                e.preventDefault();
-                var url = $(this).attr("action");
-                $.get(url + "/tabledata?" + $(this).serialize(), function (data) {
-                    $("#table-data").html(data);
-                });
-                $.get(url + "/data?" + $(this).serialize(), function (data) {
-                    showSectorDataInGraph(data);
-                });
+
+    var ajaxSubmitForm = function () {
+        $("[data-ajax-form]").submit(function (e) {
+            $("#table-data").html("");
+            $("#graph-data").html("");
+            e.preventDefault();
+            var url = $(this).attr("action");
+            $.get(url + "/tabledata?" + $(this).serialize(), function (data) {
+                $("#table-data").html(data);
+            });
+            $.get(url + "/data?" + $(this).serialize(), function (data) {
+                showSectorDataInGraph(data);
             });
         });
-    });
+    };
 
 
     var showSectorDataInGraph = function (data) {
@@ -32,8 +23,8 @@ $(document).ready(function () {
         for (var index in data) {
             var entry = data[index];
             yearsSet[entry.year] = true;
-            if ( ! (entry.name in namesSet)) {
-                namesSet[entry.name] = [];           
+            if (!(entry.name in namesSet)) {
+                namesSet[entry.name] = [];
             }
             namesSet[entry.name].push(entry);
         }
@@ -80,4 +71,22 @@ $(document).ready(function () {
             series: series
         });
     };
+    ajaxSubmitForm();
+    var url = $("[data-category-sector]").data("category-sector");
+    $.get(url + "/data", function (data) {
+        showSectorDataInGraph(data);
+    });
+    /*$(".dropdown li a").click(function(){
+     $("#first-select").html($(this).text() + " <span class=\"caret\"></span>");
+     });*/
+    $("[data-category-sector]").click(function () {
+        $("#options").html("");
+        $("#table-data").html("");
+        $("#graph-data").html("");
+        var url = $(this).data("category-sector");
+        $.get(url + "/options", function (data) {
+            $("#options").html(data);
+            ajaxSubmitForm();
+        });
+    });
 });
