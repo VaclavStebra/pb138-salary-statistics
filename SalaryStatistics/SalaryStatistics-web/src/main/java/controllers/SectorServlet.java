@@ -105,9 +105,11 @@ public class SectorServlet extends HttpServlet {
     private Document getData(SectorManager manager, HttpServletRequest request) throws IOException, ParserConfigurationException {
         List<Sector> sectors = manager.findAllSectors();
         String[] years = request.getParameterValues("year");
-        String[] names = request.getParameterValues("name");
+        String[] code = request.getParameterValues("code");
+        String[] countries = request.getParameterValues("country");
         sectors = filterByYear(sectors, years);
-        sectors = filterByName(sectors, names);
+        sectors = filterByCode(sectors, code);
+        sectors = filterByCountry(sectors, countries);
         return returnTableData(sectors);
     }
 
@@ -124,11 +126,13 @@ public class SectorServlet extends HttpServlet {
         div.setAttribute("class", "form-group");
 
         Set<String> years = new HashSet<>();
-        Set<String> names = new HashSet<>();
+        Set<String> codes = new HashSet<>();
+        Set<String> countries = new HashSet<>();
         List<Sector> sectors = manager.findAllSectors();
         for (Sector sector : sectors) {
             years.add(sector.getYear());
-            names.add(sector.getName());
+            codes.add(sector.getCode());
+            countries.add(sector.getCountry());
         }
 
         for (String year : years) {
@@ -146,15 +150,35 @@ public class SectorServlet extends HttpServlet {
 
         div.appendChild(doc.createElement("br"));
 
-        for (String name : names) {
+        for (String code : codes) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("name", "name");
+            input.setAttribute("name", "code");
             input.setAttribute("checked", "");
-            input.setAttribute("value", name);
-            input.setTextContent(name);
+            input.setAttribute("value", code);
+            for (Sector sector : sectors) {
+                if (sector.getCode().equals(code)) {                    
+                    input.setTextContent(sector.getName());
+                    break;
+                }
+            }
+            label.appendChild(input);
+            div.appendChild(label);
+        }
+        
+        div.appendChild(doc.createElement("br"));
+
+        for (String country : countries) {
+            Element label = doc.createElement("label");
+            label.setAttribute("class", "checkbox-inline");
+            Element input = doc.createElement("input");
+            input.setAttribute("type", "checkbox");
+            input.setAttribute("name", "country");
+            input.setAttribute("checked", "");
+            input.setAttribute("value", country);
+            input.setTextContent(country);
             label.appendChild(input);
             div.appendChild(label);
         }
@@ -173,8 +197,10 @@ public class SectorServlet extends HttpServlet {
 
     private Document returnTableData(List<Sector> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
+        TreeSet<String> countries = new TreeSet<>();
         for (Sector sector : data) {
             years.add(sector.getYear());
+            countries.add(sector.getCountry());
         }
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -185,37 +211,53 @@ public class SectorServlet extends HttpServlet {
         Element thead = doc.createElement("thead");
         Element theadRow = doc.createElement("tr");
         Element th = doc.createElement("th");
+        th.setAttribute("rowspan", "2");
         th.setTextContent("Nazev odvetvi");
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
+            th.setAttribute("colspan", String.valueOf(countries.size()));
             th.setTextContent(year);
             theadRow.appendChild(th);
+        }
+        thead.appendChild(theadRow);
+        theadRow = doc.createElement("tr");
+        for (int i = 0; i < years.size(); i++) {
+            for (String country : countries) {
+                th = doc.createElement("th");
+                th.setTextContent(country);
+                theadRow.appendChild(th);
+            }
         }
         thead.appendChild(theadRow);
 
         Element tbody = doc.createElement("tbody");
         Map<String, List<Sector>> sectors = new HashMap<>();
         for (Sector sector : data) {
-            if (sectors.containsKey(sector.getName())) {
-                sectors.get(sector.getName()).add(sector);
+            if (sectors.containsKey(sector.getCode())) {
+                sectors.get(sector.getCode()).add(sector);
             } else {
                 List<Sector> s = new ArrayList<>();
                 s.add(sector);
-                sectors.put(sector.getName(), s);
+                sectors.put(sector.getCode(), s);
             }
         }
         for (Entry<String, List<Sector>> sector : sectors.entrySet()) {
             Element tr = doc.createElement("tr");
             Element td = doc.createElement("td");
-            td.setTextContent(sector.getKey());
+            //TODO
+            td.setTextContent(sector.getValue().get(0).getName());
             tr.appendChild(td);
             List<Sector> values = sector.getValue();
             values.sort(new Comparator<Sector>() {
 
                 @Override
                 public int compare(Sector o1, Sector o2) {
-                    return o1.getYear().compareTo(o2.getYear());
+                    int yearResult = o1.getYear().compareTo(o2.getYear());
+                    if (yearResult == 0) {
+                        return o1.getCountry().compareTo(o2.getCountry());
+                    }
+                    return yearResult;
                 }
 
             });
@@ -257,9 +299,11 @@ public class SectorServlet extends HttpServlet {
     private String getJsonData(SectorManager manager, HttpServletRequest request) throws IOException {
         List<Sector> data = manager.findAllSectors();
         String[] years = request.getParameterValues("year");
-        String[] names = request.getParameterValues("name");
+        String[] codes = request.getParameterValues("code");
+        String[] countries = request.getParameterValues("country");
         data = filterByYear(data, years);
-        data = filterByName(data, names);
+        data = filterByCode(data, codes);
+        data = filterByCountry(data, countries);
         return new Gson().toJson(data);
     }
 
@@ -279,12 +323,28 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
-    private List<Sector> filterByName(List<Sector> sectors, String[] names) {
+    private List<Sector> filterByCode(List<Sector> sectors, String[] codes) {
         List<Sector> filtered = new ArrayList<>();
-        if (names != null) {
+        if (codes != null) {
             for (Sector sector : sectors) {
-                for (String name : names) {
-                    if (sector.getName().equals(name)) {
+                for (String code : codes) {
+                    if (sector.getCode().equals(code)) {
+                        filtered.add(sector);
+                    }
+                }
+            }
+            return filtered;
+        } else {
+            return sectors;
+        }
+    }
+    
+     private List<Sector> filterByCountry(List<Sector> sectors, String[] countries) {
+        List<Sector> filtered = new ArrayList<>();
+        if (countries != null) {
+            for (Sector sector : sectors) {
+                for (String country : countries) {
+                    if (sector.getCountry().equals(country)) {
                         filtered.add(sector);
                     }
                 }

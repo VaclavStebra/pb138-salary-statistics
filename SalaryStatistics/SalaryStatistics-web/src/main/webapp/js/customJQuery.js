@@ -15,53 +15,89 @@ $(document).ready(function () {
         });
     };
 
-
-    var showSectorDataInGraph = function (data) {
-        var yearsSet = {};
-        var namesSet = {};
-        var series = [];
+    var makeSet = function(data, property) {
+        var set = [];
         for (var index in data) {
             var entry = data[index];
-            yearsSet[entry.year] = true;
-            if (!(entry.name in namesSet)) {
-                namesSet[entry.name] = [];
+            set[entry[property]] = true;
+        }
+        var result = [];
+        for (var item in set) {
+            result.push(item);
+        }
+        return result;
+    };
+    
+    var getSectorName = function(data, code) {
+        for (var i in data) {
+            var entry = data[i];
+            if (entry.code === code) {
+                return entry.name;
             }
-            namesSet[entry.name].push(entry);
         }
-        var years = [];
-        for (var index in yearsSet) {
-            years.push(index);
+        return null;
+    };
+
+    var showSectorDataInGraph = function (data) {
+        var div = $('<div id="graph-data1" style="width:100%; height:400px;"></div>');
+        $("#graphs").append(div);
+        var years = makeSet(data, "year");
+        var countries = makeSet(data, "country");
+        var sectors = makeSet(data, "code");
+        years.sort();
+        countries.sort();
+        sectors.sort();
+        var xAxis = [];
+        for (var yearIndex in years) {
+            for (var sectorIndex in sectors) {
+                xAxis.push(years[yearIndex] + " " + getSectorName(data, sectors[sectorIndex]));
+            }
         }
-        for (var index in namesSet) {
-            var category = namesSet[index];
-            var serie = {
-                name: "",
-                data: []
-            };
+        var series = [];
+        for (var index in countries) {
+            series.push({name: countries[index], data: []});
+        }
+        for (var index in series) {
+            var countryName = series[index].name;
+            var salariesByCountry = [];
+           
+            for (var i in data) {
+                var entry = data[i];
+                if (entry.country === countryName) {
+                    salariesByCountry.push(entry);
+                }
+            }
+            
             var compare = function (a, b) {
                 if (a.year < b.year)
                     return -1;
                 if (a.year > b.year)
                     return 1;
+                if (a.code < b.code) {
+                    return -1;
+                }
+                if (a.code > b.code) {
+                    return 1;
+                }
                 return 0;
             };
 
-            category.sort(compare);
-            for (var entryIndex in category) {
-                serie.name = category[entryIndex].name;
-                serie.data.push(category[entryIndex].averageSalary);
+            salariesByCountry.sort(compare);
+            for (var i in salariesByCountry) {
+                series[index].data.push(salariesByCountry[i].averageSalary);
             }
-            series.push(serie);
-        }
-        $("#graph-data").highcharts({
+            
+        } 
+       
+        $("#graph-data1").highcharts({
             chart: {
-                type: 'column'
+                type: 'bar'
             },
             title: {
                 text: 'Plat v odvetvich'
             },
             xAxis: {
-                categories: years
+                categories: xAxis
             },
             yAxis: {
                 title: {

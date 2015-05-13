@@ -40,7 +40,9 @@
             <div id="table-data">
                 <c:out value="${table}" escapeXml="false" />
             </div>
-            <div id="graph-data" style="width:100%; height:400px;"></div>
+            <div id="graphs">
+                
+            </div>
         </div>
 
     </body>

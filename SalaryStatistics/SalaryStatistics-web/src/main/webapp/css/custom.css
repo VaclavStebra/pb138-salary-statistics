@@ -8,3 +8,7 @@
 .header {
     color: #eee;
 }
+
+th[colspan] {
+    text-align: center;
+}
