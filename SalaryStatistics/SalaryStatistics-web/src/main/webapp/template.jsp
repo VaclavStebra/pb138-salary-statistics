@@ -26,7 +26,7 @@
                         <li class="dropdown">
                             <a href="#" id="first-select" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Výber <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="#" data-category-sector="${pageContext.request.contextPath}/sector">Sektor</a></li>
+                                <li><a href="${pageContext.request.contextPath}/sector">Sektor</a></li>
                                 <li><a href="#">Vek</a></li>
                                 <li><a href="#">Vzdelání</a></li>
                             </ul>

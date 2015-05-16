@@ -1,21 +1,5 @@
 $(document).ready(function () {
 
-    var ajaxSubmitForm = function () {
-        $("[data-ajax-form]").submit(function (e) {
-            $("#table-data").html("");
-            $("#graphs").html("");
-            e.preventDefault();
-            var url = $(this).attr("action");
-            $.get(url + "/tabledata?" + $(this).serialize(), function (data) {
-                $("#table-data").html(data);
-            });
-            $.get(url + "/data?" + $(this).serialize(), function (data) {
-                showSectorDataInGraph(data);
-                showSectorDataByCountry(data);
-            });
-        });
-    };
-
     var makeSet = function (data, property) {
         var set = [];
         for (var index in data) {
@@ -165,23 +149,8 @@ $(document).ready(function () {
             series: series
         });
     };
-    ajaxSubmitForm();
-    var url = $("[data-category-sector]").data("category-sector");
-    $.get(url + "/data?filter=false", function (data) {
+    $.get("sector/data?" + $("#options form").serialize(), function (data) {
         showSectorDataInGraph(data);
         showSectorDataByCountry(data);
-    });
-    /*$(".dropdown li a").click(function(){
-     $("#first-select").html($(this).text() + " <span class=\"caret\"></span>");
-     });*/
-    $("[data-category-sector]").click(function () {
-        $("#options").html("");
-        $("#table-data").html("");
-        $("#graph-data").html("");
-        var url = $(this).data("category-sector");
-        $.get(url + "/options", function (data) {
-            $("#options").html(data);
-            ajaxSubmitForm();
-        });
     });
 });

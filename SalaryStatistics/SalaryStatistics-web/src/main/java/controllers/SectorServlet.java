@@ -23,6 +23,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,52 +46,31 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"", "/sector/*"})
 public class SectorServlet extends HttpServlet {
 
+    private static final String CZ_COUNTRY = "cz";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
         request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        DataSource source = (DataSource) getServletContext().getAttribute("dataSource");
         SectorManagerImpl manager = new SectorManagerImpl();
-        BasicDataSource dataSource = new BasicDataSource();
-        // TODO move db config to properties file
-        dataSource.setUrl("jdbc:derby://localhost:1527/salarystatistics");
-        dataSource.setUsername("dbuser");
-        dataSource.setPassword("pass");
-        manager.setDataSource(dataSource);
+        manager.setDataSource(source);
         String action = request.getPathInfo();
+        if (action == null) {
+            action = "/";
+        }
         switch (action) {
             case "/": {
                 try {
-                    Document options = getOptions(manager, request);
-                    Document tableData = getData(manager, request, false);
+                    Document options = getOptions(manager, request, request.getQueryString() == null);
+                    Document tableData = getData(manager, request, request.getQueryString() != null);
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
                     request.getRequestDispatcher("/template.jsp").forward(request, response);
                 } catch (ParserConfigurationException | TransformerException | TransformerFactoryConfigurationError | IllegalArgumentException ex) {
                     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-            case "/options": {
-                try {
-                    Document options = getOptions(manager, request);
-                    writeDocumentToResponse(options, response);
-                } catch (ParserConfigurationException ex) {
-                    Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            break;
-            case "/tabledata": {
-                try {
-                    Document tableData = getData(manager, request, true);
-                    writeDocumentToResponse(tableData, response);
-                } catch (ParserConfigurationException ex) {
-                    Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                break;
             }
             case "/data": {
                 String data = getJsonData(manager, request);
@@ -115,14 +95,13 @@ public class SectorServlet extends HttpServlet {
         return returnTableData(sectors);
     }
 
-    private Document getOptions(SectorManager manager, HttpServletRequest request) throws ParserConfigurationException {
+    private Document getOptions(SectorManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
         Document doc = builder.newDocument();
         Element rootElement = doc.createElement("form");
         rootElement.setAttribute("method", "GET");
         rootElement.setAttribute("action", request.getContextPath() + "/sector");
-        rootElement.setAttribute("data-ajax-form", "true");
 
         Element div = doc.createElement("div");
         div.setAttribute("class", "form-group");
@@ -137,13 +116,22 @@ public class SectorServlet extends HttpServlet {
             countries.add(sector.getCountry());
         }
 
+        String[] yearsParametersValues = request.getParameterValues("year");
         for (String year : years) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
             input.setAttribute("name", "year");
-            input.setAttribute("checked", "");
+            if (yearsParametersValues != null) {
+                for (String parameterYear : yearsParametersValues) {
+                    if (parameterYear.equals(year)) {
+                        input.setAttribute("checked", "");
+                    }
+                }
+            } else if (checkAll) {
+                input.setAttribute("checked", "");
+            }
             input.setAttribute("value", year);
             input.setTextContent(year);
             label.appendChild(input);
@@ -152,16 +140,25 @@ public class SectorServlet extends HttpServlet {
 
         div.appendChild(doc.createElement("br"));
 
+        String[] codesParametersValues = request.getParameterValues("code");
         for (String code : codes) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
             input.setAttribute("name", "code");
-            input.setAttribute("checked", "");
+            if (codesParametersValues != null) {
+                for (String parameterCode : codesParametersValues) {
+                    if (parameterCode.equals(code)) {
+                        input.setAttribute("checked", "");
+                    }
+                }
+            } else if (checkAll) {
+                input.setAttribute("checked", "");
+            }
             input.setAttribute("value", code);
             for (Sector sector : sectors) {
-                if (sector.getCode().equals(code)) {                    
+                if (sector.getCode().equals(code) && sector.getCountry().equals(CZ_COUNTRY)) {
                     input.setTextContent(sector.getName());
                     break;
                 }
@@ -169,16 +166,25 @@ public class SectorServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-        
+
         div.appendChild(doc.createElement("br"));
 
+        String[] countryParametersValues = request.getParameterValues("country");
         for (String country : countries) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
             input.setAttribute("name", "country");
-            input.setAttribute("checked", "");
+            if (countryParametersValues != null) {
+                for (String countryParameter : countryParametersValues) {
+                    if (countryParameter.equals(country)) {
+                        input.setAttribute("checked", "");
+                    }
+                }
+            } else if (checkAll) {
+                input.setAttribute("checked", "");
+            }
             input.setAttribute("value", country);
             input.setTextContent(country);
             label.appendChild(input);
@@ -300,8 +306,9 @@ public class SectorServlet extends HttpServlet {
 
     private String getJsonData(SectorManager manager, HttpServletRequest request) throws IOException {
         List<Sector> data = manager.findAllSectors();
-        String filterStr = request.getParameter("filter");
-        boolean filter = !(filterStr != null && !Boolean.getBoolean(filterStr));
+        //String filterStr = request.getParameter("filter");
+        //boolean filter = !(filterStr != null && !Boolean.getBoolean(filterStr));
+        boolean filter = true;
         if (filter) {
             String[] years = request.getParameterValues("year");
             String[] codes = request.getParameterValues("code");
@@ -344,8 +351,8 @@ public class SectorServlet extends HttpServlet {
             return filtered;
         }
     }
-    
-     private List<Sector> filterByCountry(List<Sector> sectors, String[] countries) {
+
+    private List<Sector> filterByCountry(List<Sector> sectors, String[] countries) {
         List<Sector> filtered = new ArrayList<>();
         if (countries != null) {
             for (Sector sector : sectors) {
