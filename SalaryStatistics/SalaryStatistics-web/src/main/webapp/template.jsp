@@ -11,6 +11,7 @@
         <script src="js/customJQuery.js"></script>
         <script src="js/bootstrap.js"></script>
         <script src="js/highcharts.js"></script>
+        <script src="js/ageServlet.js"></script>
     </head>
     <body>
         <div class="header-holder">

@@ -390,6 +390,11 @@ $(document).ready(function () {
                 showEducationDataBySex(data);
                 showEducationDataByYearAndSex(data);
                 break;
+            case "age":
+                showAgeDataInGraph(data);
+                showAgeDataBySex(data);
+                showAgeDataByYearAndSex(data);
+                break;
         }
     });
 
