@@ -1,9 +1,9 @@
 package controllers;
 
 import com.google.gson.Gson;
-import dao.Sector;
-import dao.SectorManager;
-import dao.SectorManagerImpl;
+import dao.Education;
+import dao.EducationManager;
+import dao.EducationManagerImpl;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -35,7 +34,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -43,8 +41,8 @@ import org.w3c.dom.Element;
  *
  * @author Václav Štěbra <422186@mail.muni.cz>
  */
-@WebServlet(urlPatterns = {"", "/sector/*"})
-public class SectorServlet extends HttpServlet {
+@WebServlet(urlPatterns = {"/education/*"})
+public class EducationServlet extends HttpServlet {
 
     private static final String CZ_COUNTRY = "cz";
 
@@ -54,7 +52,7 @@ public class SectorServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         DataSource source = (DataSource) getServletContext().getAttribute("dataSource");
-        SectorManagerImpl manager = new SectorManagerImpl();
+        EducationManagerImpl manager = new EducationManagerImpl();
         manager.setDataSource(source);
         String action = request.getPathInfo();
         if (action == null) {
@@ -67,7 +65,7 @@ public class SectorServlet extends HttpServlet {
                     Document tableData = getData(manager, request, request.getQueryString() != null);
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
-                    request.setAttribute("graphUrl", "sector");
+                    request.setAttribute("graphUrl", "education");
                     request.getRequestDispatcher("/template.jsp").forward(request, response);
                 } catch (ParserConfigurationException | TransformerException | TransformerFactoryConfigurationError | IllegalArgumentException ex) {
                     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -85,38 +83,38 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
-    private Document getData(SectorManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
-        List<Sector> sectors = manager.findAllSectors();
+    private Document getData(EducationManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
+        List<Education> educations = manager.findAllEducations();
         if (filter) {
             String[] years = request.getParameterValues("year");
-            String[] code = request.getParameterValues("code");
+            String[] degrees = request.getParameterValues("degree");
             String[] countries = request.getParameterValues("country");
-            sectors = filterByYear(sectors, years);
-            sectors = filterByCode(sectors, code);
-            sectors = filterByCountry(sectors, countries);
+            educations = filterByYear(educations, years);
+            educations = filterByDegree(educations, degrees);
+            educations = filterByCountry(educations, countries);
         }
-        return returnTableData(sectors);
+        return returnTableData(educations);
     }
 
-    private Document getOptions(SectorManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
+    private Document getOptions(EducationManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
         Document doc = builder.newDocument();
         Element rootElement = doc.createElement("form");
         rootElement.setAttribute("method", "GET");
-        rootElement.setAttribute("action", request.getContextPath() + "/sector");
+        rootElement.setAttribute("action", request.getContextPath() + "/education");
 
         Element div = doc.createElement("div");
         div.setAttribute("class", "form-group");
 
         Set<String> years = new HashSet<>();
-        Set<String> codes = new HashSet<>();
+        Set<String> degrees = new HashSet<>();
         Set<String> countries = new HashSet<>();
-        List<Sector> sectors = manager.findAllSectors();
-        for (Sector sector : sectors) {
-            years.add(sector.getYear());
-            codes.add(sector.getCode());
-            countries.add(sector.getCountry());
+        List<Education> educations = manager.findAllEducations();
+        for (Education education : educations) {
+            years.add(education.getYear());
+            degrees.add(education.getDegree());
+            countries.add(education.getCountry());
         }
 
         String[] yearsParametersValues = request.getParameterValues("year");
@@ -143,29 +141,24 @@ public class SectorServlet extends HttpServlet {
 
         div.appendChild(doc.createElement("br"));
 
-        String[] codesParametersValues = request.getParameterValues("code");
-        for (String code : codes) {
+        String[] degreesParametersValues = request.getParameterValues("degree");
+        for (String degree : degrees) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("name", "code");
-            if (codesParametersValues != null) {
-                for (String parameterCode : codesParametersValues) {
-                    if (parameterCode.equals(code)) {
+            input.setAttribute("name", "degree");
+            if (degreesParametersValues != null) {
+                for (String parameterDegree : degreesParametersValues) {
+                    if (parameterDegree.equals(degree)) {
                         input.setAttribute("checked", "");
                     }
                 }
             } else if (checkAll) {
                 input.setAttribute("checked", "");
             }
-            input.setAttribute("value", code);
-            for (Sector sector : sectors) {
-                if (sector.getCode().equals(code) && sector.getCountry().equals(CZ_COUNTRY)) {
-                    input.setTextContent(sector.getName());
-                    break;
-                }
-            }
+            input.setAttribute("value", degree);
+            input.setTextContent(degree);
             label.appendChild(input);
             div.appendChild(label);
         }
@@ -205,13 +198,15 @@ public class SectorServlet extends HttpServlet {
         doc.appendChild(rootElement);
         return doc;
     }
-
-    private Document returnTableData(List<Sector> data) throws IOException, ParserConfigurationException {
+    
+    private Document returnTableData(List<Education> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
-        TreeSet<String> countries = new TreeSet<>();
-        for (Sector sector : data) {
-            years.add(sector.getYear());
-            countries.add(sector.getCountry());
+        SortedSet<String> countries = new TreeSet<>();
+        SortedSet<String> sexes = new TreeSet<>();
+        for (Education education : data) {
+            years.add(education.getYear());
+            countries.add(education.getCountry());
+            sexes.add(education.getSex());
         }
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -222,18 +217,18 @@ public class SectorServlet extends HttpServlet {
         Element thead = doc.createElement("thead");
         Element theadRow = doc.createElement("tr");
         Element th = doc.createElement("th");
-        th.setAttribute("rowspan", "2");
-        th.setTextContent("Nazev odvetvi");
+        th.setAttribute("rowspan", "3");
+        th.setTextContent("Stupen vzdelani");
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
-            th.setAttribute("colspan", String.valueOf(countries.size()));
+            th.setAttribute("colspan", String.valueOf(countries.size() * sexes.size()));
             th.setTextContent(year);
             theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
         theadRow = doc.createElement("tr");
-        for (int i = 0; i < years.size(); i++) {
+        for (int i = 0; i < years.size() * sexes.size(); i++) {
             for (String country : countries) {
                 th = doc.createElement("th");
                 th.setTextContent(country);
@@ -241,40 +236,51 @@ public class SectorServlet extends HttpServlet {
             }
         }
         thead.appendChild(theadRow);
-
-        Element tbody = doc.createElement("tbody");
-        Map<String, List<Sector>> sectors = new HashMap<>();
-        for (Sector sector : data) {
-            if (sectors.containsKey(sector.getCode())) {
-                sectors.get(sector.getCode()).add(sector);
-            } else {
-                List<Sector> s = new ArrayList<>();
-                s.add(sector);
-                sectors.put(sector.getCode(), s);
+        theadRow = doc.createElement("tr");
+        for (int i = 0; i < years.size(); i++) {
+            for (String sex : sexes) {
+                th = doc.createElement("th");
+                th.setTextContent(sex);
+                theadRow.appendChild(th);
             }
         }
-        for (Entry<String, List<Sector>> sector : sectors.entrySet()) {
+        thead.appendChild(theadRow);
+
+        Element tbody = doc.createElement("tbody");
+        Map<String, List<Education>> educations = new HashMap<>();
+        for (Education education : data) {
+            if (educations.containsKey(education.getDegree())) {
+                educations.get(education.getDegree()).add(education);
+            } else {
+                List<Education> s = new ArrayList<>();
+                s.add(education);
+                educations.put(education.getDegree(), s);
+            }
+        }
+        for (Map.Entry<String, List<Education>> education : educations.entrySet()) {
             Element tr = doc.createElement("tr");
             Element td = doc.createElement("td");
-            //TODO
-            td.setTextContent(sector.getValue().get(0).getName());
+            td.setTextContent(education.getKey());
             tr.appendChild(td);
-            List<Sector> values = sector.getValue();
-            values.sort(new Comparator<Sector>() {
+            List<Education> values = education.getValue();
+            values.sort(new Comparator<Education>() {
 
                 @Override
-                public int compare(Sector o1, Sector o2) {
-                    int yearResult = o1.getYear().compareTo(o2.getYear());
-                    if (yearResult == 0) {
-                        return o1.getCountry().compareTo(o2.getCountry());
+                public int compare(Education o1, Education o2) {
+                    int result = o1.getYear().compareTo(o2.getYear());
+                    if (result == 0) {
+                        result = o1.getCountry().compareTo(o2.getCountry());
                     }
-                    return yearResult;
+                    if (result == 0) {
+                        result = o1.getSex().compareTo(o2.getSex());
+                    }
+                    return result;
                 }
 
             });
-            for (Sector s : values) {
+            for (Education e : values) {
                 td = doc.createElement("td");
-                Double salary = s.getAverageSalary();
+                Double salary = e.getAverageSalary();
                 td.setTextContent(String.valueOf(salary));
                 tr.appendChild(td);
             }
@@ -287,16 +293,6 @@ public class SectorServlet extends HttpServlet {
         return doc;
     }
 
-    /*private void writeDocumentToResponse(Document doc, HttpServletResponse response) throws TransformerFactoryConfigurationError {
-        try {
-            String dataToWrite = documentToString(doc);
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(dataToWrite);
-        } catch (IllegalArgumentException | TransformerException | IOException ex) {
-            Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -307,29 +303,29 @@ public class SectorServlet extends HttpServlet {
         return dataToWrite;
     }
 
-    private String getJsonData(SectorManager manager, HttpServletRequest request) throws IOException {
-        List<Sector> data = manager.findAllSectors();
+    private String getJsonData(EducationManager manager, HttpServletRequest request) throws IOException {
+        List<Education> data = manager.findAllEducations();
         //String filterStr = request.getParameter("filter");
         //boolean filter = !(filterStr != null && !Boolean.getBoolean(filterStr));
         boolean filter = true;
         if (filter) {
             String[] years = request.getParameterValues("year");
-            String[] codes = request.getParameterValues("code");
+            String[] degrees = request.getParameterValues("degree");
             String[] countries = request.getParameterValues("country");
             data = filterByYear(data, years);
-            data = filterByCode(data, codes);
+            data = filterByDegree(data, degrees);
             data = filterByCountry(data, countries);
         }
         return new Gson().toJson(data);
     }
 
-    private List<Sector> filterByYear(List<Sector> sectors, String[] years) {
-        List<Sector> filtered = new ArrayList<>();
+    private List<Education> filterByYear(List<Education> educations, String[] years) {
+        List<Education> filtered = new ArrayList<>();
         if (years != null) {
-            for (Sector sector : sectors) {
+            for (Education education : educations) {
                 for (String year : years) {
-                    if (sector.getYear().equals(year)) {
-                        filtered.add(sector);
+                    if (education.getYear().equals(year)) {
+                        filtered.add(education);
                     }
                 }
             }
@@ -339,13 +335,13 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
-    private List<Sector> filterByCode(List<Sector> sectors, String[] codes) {
-        List<Sector> filtered = new ArrayList<>();
-        if (codes != null) {
-            for (Sector sector : sectors) {
-                for (String code : codes) {
-                    if (sector.getCode().equals(code)) {
-                        filtered.add(sector);
+    private List<Education> filterByDegree(List<Education> educations, String[] degrees) {
+        List<Education> filtered = new ArrayList<>();
+        if (degrees != null) {
+            for (Education education : educations) {
+                for (String degree : degrees) {
+                    if (education.getDegree().equals(degree)) {
+                        filtered.add(education);
                     }
                 }
             }
@@ -355,13 +351,13 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
-    private List<Sector> filterByCountry(List<Sector> sectors, String[] countries) {
-        List<Sector> filtered = new ArrayList<>();
+    private List<Education> filterByCountry(List<Education> educations, String[] countries) {
+        List<Education> filtered = new ArrayList<>();
         if (countries != null) {
-            for (Sector sector : sectors) {
+            for (Education education : educations) {
                 for (String country : countries) {
-                    if (sector.getCountry().equals(country)) {
-                        filtered.add(sector);
+                    if (education.getCountry().equals(country)) {
+                        filtered.add(education);
                     }
                 }
             }
@@ -370,5 +366,4 @@ public class SectorServlet extends HttpServlet {
             return filtered;
         }
     }
-
 }
