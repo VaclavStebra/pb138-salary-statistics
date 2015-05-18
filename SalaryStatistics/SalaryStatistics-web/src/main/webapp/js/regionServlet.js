@@ -1,29 +1,20 @@
-var showAgeDataInGraph = function (data) {
+var showRegionDataInGraph = function (data) {
     var div = $('<div id="graph-data0" style="width:100%; height:400px;"></div>');
     $("#graphs").append(div);
-    var allIntervals = [];
-    $.each(data, function (i, item) {
-        allIntervals.push(makeInterval(data[i]));
-    });
-    var intervals = [];
-    $.each(allIntervals, function (i, el) {
-        if ($.inArray(el, intervals) === -1)
-            intervals.push(el);
-    });
     var years = makeSet(data, "year");
     var countries = makeSet(data, "country");
+    var names = makeSet(data, "name");
     var sexes = makeSet(data, "sex");
-
     years.sort();
     countries.sort();
+    names.sort();
     sexes.sort();
-    //intervals.sort();
-
     var xAxis = [];
     for (var yearIndex in years) {
-        for (var intervalIndex in intervals) {
+        for (var nameIndex in names) {
             for (var sexesIndex in sexes) {
-                xAxis.push(years[yearIndex] + " " + intervals[intervalIndex] + " " + sexes[sexesIndex] /*getIntervalName(data, intervals[intervalIndex])*/);
+                xAxis.push(years[yearIndex] + " " + names[nameIndex] +
+                        " " + sexes[sexesIndex]);
             }
         }
     }
@@ -42,10 +33,31 @@ var showAgeDataInGraph = function (data) {
             }
         }
 
+        var compare = function (a, b) {
+            if (a.year < b.year)
+                return -1;
+            if (a.year > b.year)
+                return 1;
+            if (a.name < b.name) {
+                return -1;
+            }
+            if (a.name > b.name) {
+                return 1;
+            }
+            if (a.sex < b.sex) {
+                return -1;
+            }
+            if (a.sex > b.sex) {
+                return 1;
+            }
+            return 0;
+        };
+
         salariesByCountry.sort(compare);
         for (var i in salariesByCountry) {
             series[index].data.push(salariesByCountry[i].averageSalary);
         }
+
     }
 
     $("#graph-data0").highcharts({
@@ -53,13 +65,13 @@ var showAgeDataInGraph = function (data) {
             type: 'bar'
         },
         title: {
-            text: 'Platy dle věku'
+            text: 'Plat v regionech'
         },
         xAxis: {
             categories: xAxis
         },
         yAxis: {
-            min: 0,
+            min: 300,
             title: {
                 text: 'Plat [CZK]'
             }
@@ -68,22 +80,13 @@ var showAgeDataInGraph = function (data) {
     });
 };
 
-var showAgeDataBySex = function (data) {
-    var allIntervals = [];
-    $.each(data, function (i, item) {
-        allIntervals.push(makeInterval(data[i]));
-    });
-    var intervals = [];
-    $.each(allIntervals, function (i, el) {
-        if ($.inArray(el, intervals) === -1)
-            intervals.push(el);
-    });
+var showRegionDataBySex = function (data) {
     var years = makeSet(data, "year");
+    var names = makeSet(data, "name");
     var countries = makeSet(data, "country");
     var sexes = makeSet(data, "sex");
-
     years.sort();
-    countries.sort();
+    names.sort();
     sexes.sort();
 
     for (var c in countries) {
@@ -98,8 +101,8 @@ var showAgeDataBySex = function (data) {
 
         var xAxis = [];
         for (var yearIndex in years) {
-            for (var intervalIndex in intervals) {
-                xAxis.push(years[yearIndex] + " " + intervals[intervalIndex]);
+            for (var nameIndex in names) {
+                xAxis.push(years[yearIndex] + " " + names[nameIndex]);
             }
         }
 
@@ -118,7 +121,13 @@ var showAgeDataBySex = function (data) {
                     filteredBySex.push(entry);
                 }
             }
-            filteredBySex.sort(compare);
+            filteredBySex.sort(function (a, b) {
+                var result = a.year - b.year;
+                if (result !== 0) {
+                    return result;
+                }
+                return a.name > b.name;
+            });
             for (var index in filteredBySex) {
                 var entry = filteredBySex[index];
                 serie.data.push(entry.averageSalary);
@@ -133,7 +142,7 @@ var showAgeDataBySex = function (data) {
                 type: 'bar'
             },
             title: {
-                text: 'Platy dle veku a pohlavi ' + country
+                text: 'Platy dle regionu a pohlavi ' + country
             },
             xAxis: {
                 categories: xAxis
@@ -143,21 +152,13 @@ var showAgeDataBySex = function (data) {
     }
 };
 
-var showAgeDataByYearAndSex = function (data) {
-    var allIntervals = [];
-    $.each(data, function (i, item) {
-        allIntervals.push(makeInterval(data[i]));
-    });
-    var intervals = [];
-    $.each(allIntervals, function (i, el) {
-        if ($.inArray(el, intervals) === -1)
-            intervals.push(el);
-    });
+var showRegionDataByYearAndSex = function (data) {
     var years = makeSet(data, "year");
+    var names = makeSet(data, "name");
     var countries = makeSet(data, "country");
     var sexes = makeSet(data, "sex");
     years.sort();
-    countries.sort();
+    names.sort();
     sexes.sort();
 
     for (var c in countries) {
@@ -173,9 +174,9 @@ var showAgeDataByYearAndSex = function (data) {
             var sex = sexes[s];
 
             var series = [];
-            for (var i in intervals) {
-                var interval = intervals[i];
-                series.push({name: interval, data: []});
+            for (var i in names) {
+                var name = names[i];
+                series.push({name: name, data: []});
             }
 
             var filteredByCountryAndSex = [];
@@ -188,25 +189,32 @@ var showAgeDataByYearAndSex = function (data) {
 
             for (var i in series) {
                 var serie = series[i];
-                var filteredByInterval = [];
+                var filteredByName = [];
                 for (var index in filteredByCountryAndSex) {
                     var entry = filteredByCountryAndSex[index];
-                    if (makeInterval(entry) === serie.name) {
-                        filteredByInterval.push(entry);
+                    if (entry.name === serie.name) {
+                        filteredByName.push(entry);
                     }
                 }
-                filteredByInterval.sort(compare);
-                for (var index in filteredByInterval) {
-                    var entry = filteredByInterval[index];
+                filteredByName.sort(function (a, b) {
+                    var result = a.year - b.year;
+                    if (result !== 0) {
+                        return result;
+                    }
+                    return a.name > b.name;
+                });
+                for (var index in filteredByName) {
+                    var entry = filteredByName[index];
                     serie.data.push(entry.averageSalary);
                 }
             }
+
             var div = $('<div id="graph-data' + (((c + 1) * (s + 1)) + countries.length + 1) + '" style="width:100%; height:400px;"></div>');
             $("#graphs").append(div);
 
             $("#graph-data" + (((c + 1) * (s + 1)) + countries.length + 1)).highcharts({
                 title: {
-                    text: 'Rust platu (' + sex + ') dle veku ' + country
+                    text: 'Rust platu (' + sex + ') dle regionu ' + country
                 },
                 xAxis: {
                     categories: years
@@ -215,6 +223,7 @@ var showAgeDataByYearAndSex = function (data) {
             });
         }
     }
+
 };
 
 function makeSet(data, property) {
@@ -228,36 +237,5 @@ function makeSet(data, property) {
         result.push(item);
     }
     return result;
-};
-
-var compare = function (a, b) {
-    if (a.year > b.year)
-        return -1;
-    if (a.year < b.year)
-        return 1;
-    if (a.ageFrom < b.ageFrom) {
-        return -1;
-    }
-    if (a.ageFrom > b.ageFrom) {
-        return 1;
-    }
-    if (a.sex < b.sex) {
-        return -1;
-    }
-    if (a.sex > b.sex) {
-        return 1;
-    }
-    return 0;
-};
-
-function makeInterval(entry) {
-    var interval = "";
-    if (entry.ageFrom == "0") {
-        interval += "Do-" + entry.ageTo;
-    } else if (entry.ageTo == "100") {
-        interval += entry.ageFrom + "-a více";
-    } else {
-        interval += entry.ageFrom + "-" + entry.ageTo;
-    }
-    return interval;
-};
+}
+;

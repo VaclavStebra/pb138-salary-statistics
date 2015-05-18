@@ -12,6 +12,7 @@
         <script src="js/bootstrap.js"></script>
         <script src="js/highcharts.js"></script>
         <script src="js/ageServlet.js"></script>
+        <script src="js/regionServlet.js"></script>
     </head>
     <body>
         <div class="header-holder">
@@ -30,6 +31,7 @@
                                 <li><a href="${pageContext.request.contextPath}/sector">Sektor</a></li>
                                 <li><a href="${pageContext.request.contextPath}/age">Vek</a></li>
                                 <li><a href="${pageContext.request.contextPath}/education">Vzdelání</a></li>
+                                <li><a href="${pageContext.request.contextPath}/region">Región</a></li>
                             </ul>
                         </li>
                     </ul>
