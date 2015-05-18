@@ -28,3 +28,21 @@ insert into "Education" ("degree", "country", "year", "averageSalary", "sex") VA
 ('Stredni bez maturity', 'sk', '2013', 564, 'zeny'),
 ('Stredni bez maturity', 'sk', '2012', 737, 'muzi'),
 ('Stredni bez maturity', 'sk', '2012', 540, 'zeny');
+
+insert into "Region" ("name", "country", "year", "averageSalary", "sex") VALUES
+('Hlavní město Praha', 'cz', '2012', 38295, 'muzi'),
+('Středočeský kraj', 'cz', '2012', 29090, 'muzi'),
+('Jihočeský kraj', 'cz', '2012', 26166, 'muzi'),
+('Plzeňský kraj', 'cz', '2012', 27437, 'muzi'),
+('Hlavní město Praha', 'cz', '2012', 22683, 'zeny'),
+('Středočeský kraj', 'cz', '2012', 29780, 'zeny'),
+('Jihočeský kraj', 'cz', '2012', 22129, 'zeny'),
+('Plzeňský kraj', 'cz', '2012', 20662, 'zeny'),
+('Hlavní město Praha', 'cz', '2011', 37346, 'muzi'),
+('Středočeský kraj', 'cz', '2011', 28316, 'muzi'),
+('Jihočeský kraj', 'cz', '2011', 25721, 'muzi'),
+('Plzeňský kraj', 'cz', '2011', 26349, 'muzi'),
+('Hlavní město Praha', 'cz', '2011', 28984, 'zeny'),
+('Středočeský kraj', 'cz', '2011', 22046, 'zeny'),
+('Jihočeský kraj', 'cz', '2011', 20171, 'zeny'),
+('Plzeňský kraj', 'cz', '2011', 21264, 'zeny')

@@ -12,6 +12,11 @@ $(document).ready(function () {
                 showEducationDataByYearAndSex(data);
                 showEducationDataInGraph(data);
                 break;
+            case "region":
+                showRegionDataInGraph(data);
+                showRegionDataBySex(data);
+                showRegionDataByYearAndSex(data);
+                break;
             case "age":
                 showAgeDataInGraph(data);
                 showAgeDataBySex(data);
