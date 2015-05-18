@@ -9,11 +9,9 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -35,7 +33,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -109,9 +106,9 @@ public class SectorServlet extends HttpServlet {
         Element div = doc.createElement("div");
         div.setAttribute("class", "form-group");
 
-        Set<String> years = new HashSet<>();
-        Set<String> codes = new HashSet<>();
-        Set<String> countries = new HashSet<>();
+        SortedSet<String> years = new TreeSet<>();
+        SortedSet<String> codes = new TreeSet<>();
+        SortedSet<String> countries = new TreeSet<>();
         List<Sector> sectors = manager.findAllSectors();
         for (Sector sector : sectors) {
             years.add(sector.getYear());
@@ -120,6 +117,9 @@ public class SectorServlet extends HttpServlet {
         }
 
         String[] yearsParametersValues = request.getParameterValues("year");
+        Element p = doc.createElement("p");
+        p.setTextContent("Roky:");
+        div.appendChild(p);
         for (String year : years) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -140,10 +140,25 @@ public class SectorServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-
+        p = doc.createElement("p");
+        Element btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);        
+        div.appendChild(p);
+        
         div.appendChild(doc.createElement("br"));
 
         String[] codesParametersValues = request.getParameterValues("code");
+        p = doc.createElement("p");
+        p.setTextContent("Nazvy odvetvi:");
+        div.appendChild(p);
         for (String code : codes) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -161,7 +176,7 @@ public class SectorServlet extends HttpServlet {
             }
             input.setAttribute("value", code);
             for (Sector sector : sectors) {
-                if (sector.getCode().equals(code) && sector.getCountry().equals(CZ_COUNTRY)) {
+                if (sector.getCode().equals(code)) {
                     input.setTextContent(sector.getName());
                     break;
                 }
@@ -170,9 +185,24 @@ public class SectorServlet extends HttpServlet {
             div.appendChild(label);
         }
 
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "code");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "code");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);        
         div.appendChild(doc.createElement("br"));
 
         String[] countryParametersValues = request.getParameterValues("country");
+        p = doc.createElement("p");
+        p.setTextContent("Zeme:");
+        div.appendChild(p);
         for (String country : countries) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -193,7 +223,19 @@ public class SectorServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);        
+        div.appendChild(p);
+        
         rootElement.appendChild(div);
 
         Element submit = doc.createElement("input");
@@ -282,21 +324,11 @@ public class SectorServlet extends HttpServlet {
         }
 
         rootElement.appendChild(thead).appendChild(tbody);
-        rootElement.setAttribute("class", "table");
+        rootElement.setAttribute("class", "table table-hover");
         doc.appendChild(rootElement);
         return doc;
     }
-
-    /*private void writeDocumentToResponse(Document doc, HttpServletResponse response) throws TransformerFactoryConfigurationError {
-        try {
-            String dataToWrite = documentToString(doc);
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(dataToWrite);
-        } catch (IllegalArgumentException | TransformerException | IOException ex) {
-            Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-
+    
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();

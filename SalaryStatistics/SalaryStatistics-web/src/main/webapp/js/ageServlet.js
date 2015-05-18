@@ -1,3 +1,16 @@
+var makeSet = function (data, property) {
+        var set = [];
+        for (var index in data) {
+            var entry = data[index];
+            set[entry[property]] = true;
+        }
+        var result = [];
+        for (var item in set) {
+            result.push(item);
+        }
+        return result;
+    };  
+
 var showAgeDataInGraph = function (data) {
     var div = $('<div id="graph-data0" style="width:100%; height:400px;"></div>');
     $("#graphs").append(div);
@@ -216,20 +229,6 @@ var showAgeDataByYearAndSex = function (data) {
         }
     }
 };
-
-function makeSet(data, property) {
-    var set = [];
-    for (var index in data) {
-        var entry = data[index];
-        set[entry[property]] = true;
-    }
-    var result = [];
-    for (var item in set) {
-        result.push(item);
-    }
-    return result;
-}
-;
 
 var compare = function (a, b) {
     if (a.year > b.year)

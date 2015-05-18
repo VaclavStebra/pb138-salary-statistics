@@ -8,10 +8,12 @@
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
         <link rel="stylesheet" type="text/css" href="css/custom.css" />
         <script src="js/jquery-2.1.4.min.js"></script>
-        <script src="js/customJQuery.js"></script>
-        <script src="js/bootstrap.js"></script>
         <script src="js/highcharts.js"></script>
         <script src="js/ageServlet.js"></script>
+        <script src="js/sectorServlet.js"></script>
+        <script src="js/educationServlet.js"></script>
+        <script src="js/customJQuery.js"></script>
+        <script src="js/bootstrap.js"></script>
     </head>
     <body>
         <div class="header-holder">

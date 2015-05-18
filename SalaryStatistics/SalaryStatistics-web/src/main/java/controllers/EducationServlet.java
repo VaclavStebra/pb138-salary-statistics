@@ -9,10 +9,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -107,16 +105,19 @@ public class EducationServlet extends HttpServlet {
         Element div = doc.createElement("div");
         div.setAttribute("class", "form-group");
 
-        Set<String> years = new HashSet<>();
-        Set<String> degrees = new HashSet<>();
-        Set<String> countries = new HashSet<>();
+        SortedSet<String> years = new TreeSet<>();
+        SortedSet<String> degrees = new TreeSet<>();
+        SortedSet<String> countries = new TreeSet<>();
         List<Education> educations = manager.findAllEducations();
         for (Education education : educations) {
             years.add(education.getYear());
             degrees.add(education.getDegree());
             countries.add(education.getCountry());
         }
-
+        
+        Element p = doc.createElement("p");
+        p.setTextContent("Roky:");
+        div.appendChild(p);
         String[] yearsParametersValues = request.getParameterValues("year");
         for (String year : years) {
             Element label = doc.createElement("label");
@@ -138,10 +139,23 @@ public class EducationServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-
+        p = doc.createElement("p");
+        Element btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);        
+        div.appendChild(p);
         div.appendChild(doc.createElement("br"));
 
-        String[] degreesParametersValues = request.getParameterValues("degree");
+        String[] degreesParametersValues = request.getParameterValues("degree");p = doc.createElement("p");
+        p.setTextContent("Stupne vzdelani:");
+        div.appendChild(p);
         for (String degree : degrees) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -162,10 +176,24 @@ public class EducationServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "degree");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "degree");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);        
         div.appendChild(doc.createElement("br"));
 
         String[] countryParametersValues = request.getParameterValues("country");
+        p = doc.createElement("p");
+        p.setTextContent("Zeme:");
+        div.appendChild(p);
         for (String country : countries) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -187,6 +215,18 @@ public class EducationServlet extends HttpServlet {
             div.appendChild(label);
         }
 
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);        
+        div.appendChild(p);
         rootElement.appendChild(div);
 
         Element submit = doc.createElement("input");
@@ -206,7 +246,9 @@ public class EducationServlet extends HttpServlet {
         for (Education education : data) {
             years.add(education.getYear());
             countries.add(education.getCountry());
-            sexes.add(education.getSex());
+            if (education.getSex() != null) {
+                sexes.add(education.getSex());
+            }
         }
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -222,13 +264,13 @@ public class EducationServlet extends HttpServlet {
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
-            th.setAttribute("colspan", String.valueOf(countries.size() * sexes.size()));
+            th.setAttribute("colspan", String.valueOf(countries.size() * (sexes.size() + 1)));
             th.setTextContent(year);
             theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
         theadRow = doc.createElement("tr");
-        for (int i = 0; i < years.size() * sexes.size(); i++) {
+        for (int i = 0; i < years.size() * (sexes.size() + 1); i++) {
             for (String country : countries) {
                 th = doc.createElement("th");
                 th.setTextContent(country);
@@ -243,6 +285,9 @@ public class EducationServlet extends HttpServlet {
                 th.setTextContent(sex);
                 theadRow.appendChild(th);
             }
+            th = doc.createElement("th");
+            th.setTextContent("spolu");
+            theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
 
@@ -272,6 +317,11 @@ public class EducationServlet extends HttpServlet {
                         result = o1.getCountry().compareTo(o2.getCountry());
                     }
                     if (result == 0) {
+                        if (o1.getSex() == null) {
+                            return 1;
+                        } else if (o2.getSex() == null) {
+                            return -1;
+                        }
                         result = o1.getSex().compareTo(o2.getSex());
                     }
                     return result;
@@ -288,7 +338,7 @@ public class EducationServlet extends HttpServlet {
         }
 
         rootElement.appendChild(thead).appendChild(tbody);
-        rootElement.setAttribute("class", "table");
+        rootElement.setAttribute("class", "table table-hover");
         doc.appendChild(rootElement);
         return doc;
     }
