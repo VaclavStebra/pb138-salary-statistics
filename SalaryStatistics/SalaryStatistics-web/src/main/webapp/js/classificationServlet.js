@@ -11,7 +11,7 @@ var makeSet = function (data, property) {
     return result;
 };
 
-var getSectorName = function (data, code) {
+var getClassificationName = function (data, code) {
     for (var i in data) {
         var entry = data[i];
         if (entry.code === code) {
@@ -21,7 +21,7 @@ var getSectorName = function (data, code) {
     return null;
 };
 
-var showSectorDataByCountry = function (data) {
+var showClassificationDataByCountry = function (data) {
 
     var years = makeSet(data, "year");
     var codes = makeSet(data, "code");
@@ -60,15 +60,15 @@ var showSectorDataByCountry = function (data) {
                 var entry = filteredByCode[index];
                 serie.data.push(entry.averageSalary);
             }
-            serie.name = getSectorName(data, serie.name);
+            serie.name = getClassificationName(data, serie.name);
         }
 
-        var div = $('<div id="graph-data' + (c + 2) + '" style="width:100%; height:400px;"></div>');
+        var div = $('<div id="graph-data-classification' + c + '" style="width:100%; height:400px;"></div>');
         $("#graphs").append(div);
 
-        $("#graph-data" + (c + 2)).highcharts({
+        $("#graph-data-classification" + c).highcharts({
             title: {
-                text: 'Rust platu dle odvetvi v ' + country
+                text: 'Rust platu dle klasifikace v ' + country
             },
             xAxis: {
                 categories: years
@@ -78,18 +78,18 @@ var showSectorDataByCountry = function (data) {
     }
 };
 
-var showSectorDataInGraph = function (data) {
+var showClassificationDataInGraph = function (data) {
     var years = makeSet(data, "year");
     var countries = makeSet(data, "country");
-    var sectors = makeSet(data, "code");
+    var codes = makeSet(data, "code");
     years.sort();
     countries.sort();
-    sectors.sort();
+    codes.sort();
     if (countries.length === 1) {
         return;
     }
-    for (var s in sectors) {
-        var sector = sectors[s];
+    for (var c in codes) {
+        var classification = codes[c];
         var series = [];
         for (var index in countries) {
             series.push({name: countries[index], data: []});
@@ -100,7 +100,7 @@ var showSectorDataInGraph = function (data) {
 
             for (var i in data) {
                 var entry = data[i];
-                if (entry.country === countryName && entry.code === sector) {
+                if (entry.country === countryName && entry.code === classification) {
                     salariesByCountryAndCode.push(entry);
                 }
             }
@@ -126,14 +126,14 @@ var showSectorDataInGraph = function (data) {
 
         }
 
-        var div = $('<div id="graph-data' + sector + '" style="width:100%; height:400px;"></div>');
+        var div = $('<div id="graph-data-classification-' + classification + '" style="width:100%; height:400px;"></div>');
         $("#graphs").append(div);
-        $("#graph-data" + sector).highcharts({
+        $("#graph-data-classifications-" + classification).highcharts({
             chart: {
                 type: 'bar'
             },
             title: {
-                text: 'Porovnani platu v sektoru ' + getSectorName(data, sector) + ' dle zemi'
+                text: 'Porovnani platu v klasifikace ' + getClassificationName(data, classification) + ' dle zemi'
             },
             xAxis: {
                 categories: years
@@ -147,4 +147,6 @@ var showSectorDataInGraph = function (data) {
         });
     }
 };
+
+
 

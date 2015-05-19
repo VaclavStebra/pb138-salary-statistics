@@ -72,7 +72,7 @@ var showEducationDataInGraph = function (data) {
                 }
 
             }
-            var div = $('<div id="graph-data-degrees' + d + s + '" style="width:100%; height:700px;"></div>');
+            var div = $('<div id="graph-data-degrees' + d + s + '" style="width:100%; height:400px;"></div>');
             $("#graphs").append(div);
             $("#graph-data-degrees" + d + s).highcharts({
                 chart: {
@@ -150,7 +150,7 @@ var showEducationDataBySex = function (data) {
                 }
             }
 
-            var div = $('<div id="graph-data-by-sex' + c + d + '" style="width:100%; height:700px;"></div>');
+            var div = $('<div id="graph-data-by-sex' + c + d + '" style="width:100%; height:400px;"></div>');
             $("#graphs").append(div);
 
             $("#graph-data-by-sex" + c + d).highcharts({
@@ -228,7 +228,7 @@ var showEducationDataByYearAndSex = function (data) {
                 }
             }
 
-            var div = $('<div id="graph-data' + (((c + 1) * (s + 1)) + countries.length + 1) + '" style="width:100%; height:700px;"></div>');
+            var div = $('<div id="graph-data' + (((c + 1) * (s + 1)) + countries.length + 1) + '" style="width:100%; height:400px;"></div>');
             $("#graphs").append(div);
 
             $("#graph-data" + (((c + 1) * (s + 1)) + countries.length + 1)).highcharts({

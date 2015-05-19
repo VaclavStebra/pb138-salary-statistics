@@ -42,8 +42,8 @@ import org.w3c.dom.Element;
  */
 @WebServlet(urlPatterns = {"", "/sector/*"})
 public class SectorServlet extends HttpServlet {
-
-    private static final String CZ_COUNTRY = "cz";
+        
+    private static final int EUR_TO_CZK = 25;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -62,6 +62,7 @@ public class SectorServlet extends HttpServlet {
                 try {
                     Document options = getOptions(manager, request, request.getQueryString() == null);
                     Document tableData = getData(manager, request, request.getQueryString() != null);
+                    request.setAttribute("heading", "Sektor");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
                     request.setAttribute("graphUrl", "sector");
@@ -316,8 +317,11 @@ public class SectorServlet extends HttpServlet {
             });
             for (Sector s : values) {
                 td = doc.createElement("td");
-                Double salary = s.getAverageSalary();
-                td.setTextContent(String.valueOf(salary));
+                Double salary = s.getAverageSalary();                
+                if (s.getCountry().equals("sk")) {
+                    salary *= EUR_TO_CZK;
+                }
+                td.setTextContent(String.valueOf(salary.intValue()));
                 tr.appendChild(td);
             }
             tbody.appendChild(tr);
@@ -351,6 +355,11 @@ public class SectorServlet extends HttpServlet {
             data = filterByYear(data, years);
             data = filterByCode(data, codes);
             data = filterByCountry(data, countries);
+        }
+        for (Sector sector : data) {
+            if (sector.getCountry().equals("sk")) {
+                sector.setAverageSalary(sector.getAverageSalary() * EUR_TO_CZK);
+            }
         }
         return new Gson().toJson(data);
     }

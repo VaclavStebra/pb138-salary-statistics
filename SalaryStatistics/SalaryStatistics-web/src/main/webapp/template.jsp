@@ -14,6 +14,7 @@
         <script src="js/regionServlet.js"></script>
         <script src="js/sectorServlet.js"></script>
         <script src="js/educationServlet.js"></script>
+        <script src="js/classificationServlet.js"></script>
         <script src="js/customJQuery.js"></script>
     </head>
     <body>
@@ -34,11 +35,13 @@
                                 <li><a href="${pageContext.request.contextPath}/age">Vek</a></li>
                                 <li><a href="${pageContext.request.contextPath}/education">Vzdelání</a></li>
                                 <li><a href="${pageContext.request.contextPath}/region">Región</a></li>
+                                <li><a href="${pageContext.request.contextPath}/classification">Klasifikace</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
             </nav>
+            <h2><c:out value="${heading}" /></h2>
             <div id="options">
                 <c:out value="${options}" escapeXml="false" />
             </div>
@@ -46,7 +49,7 @@
                 <c:out value="${table}" escapeXml="false" />
             </div>
             <div id="graphs" data-graph-url="${graphUrl}">
-                
+
             </div>
         </div>
 

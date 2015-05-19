@@ -67,6 +67,7 @@ public class RegionServlet extends HttpServlet {
                 try {
                     Document options = getOptions(manager, request, request.getQueryString() == null);
                     Document tableData = getData(manager, request, request.getQueryString() != null);
+                    request.setAttribute("heading", "Region");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
                     request.setAttribute("graphUrl", "region");

@@ -22,6 +22,10 @@ $(document).ready(function () {
                 showAgeDataBySex(data);
                 showAgeDataByYearAndSex(data);
                 break;
+            case "classification":
+                showClassificationDataByCountry(data);
+                showClassificationDataInGraph(data);
+                break;
         }
     });
     

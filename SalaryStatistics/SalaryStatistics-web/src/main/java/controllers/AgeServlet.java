@@ -64,6 +64,7 @@ public class AgeServlet extends HttpServlet {
                 try {
                     Document options = getOptions(manager, request, request.getQueryString() == null);
                     Document tableData = getData(manager, request, request.getQueryString() != null);
+                    request.setAttribute("heading", "Vek");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
                     request.setAttribute("graphUrl", "age");

@@ -1,9 +1,9 @@
 package controllers;
 
 import com.google.gson.Gson;
-import dao.Education;
-import dao.EducationManager;
-import dao.EducationManagerImpl;
+import dao.Classification;
+import dao.ClassificationManager;
+import dao.ClassificationManagerImpl;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -39,9 +40,9 @@ import org.w3c.dom.Element;
  *
  * @author Václav Štěbra <422186@mail.muni.cz>
  */
-@WebServlet(urlPatterns = {"/education/*"})
-public class EducationServlet extends HttpServlet {
-
+@WebServlet(urlPatterns = {"/classification/*"})
+public class ClassificationServlet extends HttpServlet {
+        
     private static final int EUR_TO_CZK = 25;
 
     @Override
@@ -50,7 +51,7 @@ public class EducationServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         DataSource source = (DataSource) getServletContext().getAttribute("dataSource");
-        EducationManagerImpl manager = new EducationManagerImpl();
+        ClassificationManagerImpl manager = new ClassificationManagerImpl();
         manager.setDataSource(source);
         String action = request.getPathInfo();
         if (action == null) {
@@ -61,10 +62,10 @@ public class EducationServlet extends HttpServlet {
                 try {
                     Document options = getOptions(manager, request, request.getQueryString() == null);
                     Document tableData = getData(manager, request, request.getQueryString() != null);
-                    request.setAttribute("heading", "Vzdelani");
+                    request.setAttribute("heading", "Klasifikace");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
-                    request.setAttribute("graphUrl", "education");
+                    request.setAttribute("graphUrl", "classification");
                     request.getRequestDispatcher("/template.jsp").forward(request, response);
                 } catch (ParserConfigurationException | TransformerException | TransformerFactoryConfigurationError | IllegalArgumentException ex) {
                     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -82,44 +83,44 @@ public class EducationServlet extends HttpServlet {
         }
     }
 
-    private Document getData(EducationManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
-        List<Education> educations = manager.findAllEducations();
+    private Document getData(ClassificationManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
+        List<Classification> classifications = manager.findAllClassifications();
         if (filter) {
             String[] years = request.getParameterValues("year");
-            String[] degrees = request.getParameterValues("degree");
+            String[] code = request.getParameterValues("code");
             String[] countries = request.getParameterValues("country");
-            educations = filterByYear(educations, years);
-            educations = filterByDegree(educations, degrees);
-            educations = filterByCountry(educations, countries);
+            classifications = filterByYear(classifications, years);
+            classifications = filterByCode(classifications, code);
+            classifications = filterByCountry(classifications, countries);
         }
-        return returnTableData(educations);
+        return returnTableData(classifications);
     }
 
-    private Document getOptions(EducationManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
+    private Document getOptions(ClassificationManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
         Document doc = builder.newDocument();
         Element rootElement = doc.createElement("form");
         rootElement.setAttribute("method", "GET");
-        rootElement.setAttribute("action", request.getContextPath() + "/education");
+        rootElement.setAttribute("action", request.getContextPath() + "/classification");
 
         Element div = doc.createElement("div");
         div.setAttribute("class", "form-group");
 
         SortedSet<String> years = new TreeSet<>();
-        SortedSet<String> degrees = new TreeSet<>();
+        SortedSet<String> codes = new TreeSet<>();
         SortedSet<String> countries = new TreeSet<>();
-        List<Education> educations = manager.findAllEducations();
-        for (Education education : educations) {
-            years.add(education.getYear());
-            degrees.add(education.getDegree());
-            countries.add(education.getCountry());
+        List<Classification> classifications = manager.findAllClassifications();
+        for (Classification classification : classifications) {
+            years.add(classification.getYear());
+            codes.add(classification.getCode());
+            countries.add(classification.getCountry());
         }
 
+        String[] yearsParametersValues = request.getParameterValues("year");
         Element p = doc.createElement("p");
         p.setTextContent("Roky:");
         div.appendChild(p);
-        String[] yearsParametersValues = request.getParameterValues("year");
         for (String year : years) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -150,46 +151,53 @@ public class EducationServlet extends HttpServlet {
         btn.setAttribute("data-show-all-options", "year");
         btn.setAttribute("class", "btn btn-xs btn-success");
         btn.setTextContent("Vybrat vse");
-        p.appendChild(btn);
+        p.appendChild(btn);        
         div.appendChild(p);
+        
         div.appendChild(doc.createElement("br"));
 
-        String[] degreesParametersValues = request.getParameterValues("degree");
+        String[] codesParametersValues = request.getParameterValues("code");
         p = doc.createElement("p");
-        p.setTextContent("Stupne vzdelani:");
+        p.setTextContent("Nazvy klasifikace:");
         div.appendChild(p);
-        for (String degree : degrees) {
+        for (String code : codes) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("name", "degree");
-            if (degreesParametersValues != null) {
-                for (String parameterDegree : degreesParametersValues) {
-                    if (parameterDegree.equals(degree)) {
+            input.setAttribute("name", "code");
+            if (codesParametersValues != null) {
+                for (String parameterCode : codesParametersValues) {
+                    if (parameterCode.equals(code)) {
                         input.setAttribute("checked", "");
                     }
                 }
             } else if (checkAll) {
                 input.setAttribute("checked", "");
             }
-            input.setAttribute("value", degree);
-            input.setTextContent(degree);
+            input.setAttribute("value", code);
+            for (Classification classification : classifications) {
+                if (classification.getCode().equals(code)) {
+                    input.setTextContent(classification.getName());
+                    break;
+                }
+            }
             label.appendChild(input);
             div.appendChild(label);
         }
+
         p = doc.createElement("p");
         btn = doc.createElement("button");
-        btn.setAttribute("data-show-nothing-options", "degree");
+        btn.setAttribute("data-show-nothing-options", "code");
         btn.setAttribute("class", "btn btn-xs btn-warning");
         btn.setTextContent("Zrusit vse");
         p.appendChild(btn);
         btn = doc.createElement("button");
-        btn.setAttribute("data-show-all-options", "degree");
+        btn.setAttribute("data-show-all-options", "code");
         btn.setAttribute("class", "btn btn-xs btn-success");
         btn.setTextContent("Vybrat vse");
         p.appendChild(btn);
-        div.appendChild(p);
+        div.appendChild(p);        
         div.appendChild(doc.createElement("br"));
 
         String[] countryParametersValues = request.getParameterValues("country");
@@ -216,7 +224,6 @@ public class EducationServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-
         p = doc.createElement("p");
         btn = doc.createElement("button");
         btn.setAttribute("data-show-nothing-options", "country");
@@ -227,8 +234,9 @@ public class EducationServlet extends HttpServlet {
         btn.setAttribute("data-show-all-options", "country");
         btn.setAttribute("class", "btn btn-xs btn-success");
         btn.setTextContent("Vybrat vse");
-        p.appendChild(btn);
+        p.appendChild(btn);        
         div.appendChild(p);
+        
         rootElement.appendChild(div);
 
         Element submit = doc.createElement("input");
@@ -241,16 +249,12 @@ public class EducationServlet extends HttpServlet {
         return doc;
     }
 
-    private Document returnTableData(List<Education> data) throws IOException, ParserConfigurationException {
+    private Document returnTableData(List<Classification> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
-        SortedSet<String> countries = new TreeSet<>();
-        SortedSet<String> sexes = new TreeSet<>();
-        for (Education education : data) {
-            years.add(education.getYear());
-            countries.add(education.getCountry());
-            if (education.getSex() != null) {
-                sexes.add(education.getSex());
-            }
+        TreeSet<String> countries = new TreeSet<>();
+        for (Classification classification : data) {
+            years.add(classification.getYear());
+            countries.add(classification.getCountry());
         }
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -261,18 +265,18 @@ public class EducationServlet extends HttpServlet {
         Element thead = doc.createElement("thead");
         Element theadRow = doc.createElement("tr");
         Element th = doc.createElement("th");
-        th.setAttribute("rowspan", "3");
-        th.setTextContent("Stupen vzdelani");
+        th.setAttribute("rowspan", "2");
+        th.setTextContent("Nazev odvetvi");
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
-            th.setAttribute("colspan", String.valueOf(countries.size() * (sexes.size() + 1)));
+            th.setAttribute("colspan", String.valueOf(countries.size()));
             th.setTextContent(year);
             theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
         theadRow = doc.createElement("tr");
-        for (int i = 0; i < years.size() * (sexes.size() + 1); i++) {
+        for (int i = 0; i < years.size(); i++) {
             for (String country : countries) {
                 th = doc.createElement("th");
                 th.setTextContent(country);
@@ -280,60 +284,41 @@ public class EducationServlet extends HttpServlet {
             }
         }
         thead.appendChild(theadRow);
-        theadRow = doc.createElement("tr");
-        for (int i = 0; i < years.size(); i++) {
-            for (String sex : sexes) {
-                th = doc.createElement("th");
-                th.setTextContent(sex);
-                theadRow.appendChild(th);
-            }
-            th = doc.createElement("th");
-            th.setTextContent("spolu");
-            theadRow.appendChild(th);
-        }
-        thead.appendChild(theadRow);
 
         Element tbody = doc.createElement("tbody");
-        Map<String, List<Education>> educations = new HashMap<>();
-        for (Education education : data) {
-            if (educations.containsKey(education.getDegree())) {
-                educations.get(education.getDegree()).add(education);
+        Map<String, List<Classification>> classifications = new HashMap<>();
+        for (Classification classification : data) {
+            if (classifications.containsKey(classification.getCode())) {
+                classifications.get(classification.getCode()).add(classification);
             } else {
-                List<Education> s = new ArrayList<>();
-                s.add(education);
-                educations.put(education.getDegree(), s);
+                List<Classification> s = new ArrayList<>();
+                s.add(classification);
+                classifications.put(classification.getCode(), s);
             }
         }
-        for (Map.Entry<String, List<Education>> education : educations.entrySet()) {
+        for (Entry<String, List<Classification>> classification : classifications.entrySet()) {
             Element tr = doc.createElement("tr");
             Element td = doc.createElement("td");
-            td.setTextContent(education.getKey());
+            //TODO
+            td.setTextContent(classification.getValue().get(0).getName());
             tr.appendChild(td);
-            List<Education> values = education.getValue();
-            values.sort(new Comparator<Education>() {
+            List<Classification> values = classification.getValue();
+            values.sort(new Comparator<Classification>() {
 
                 @Override
-                public int compare(Education o1, Education o2) {
-                    int result = o1.getYear().compareTo(o2.getYear());
-                    if (result == 0) {
-                        result = o1.getCountry().compareTo(o2.getCountry());
+                public int compare(Classification o1, Classification o2) {
+                    int yearResult = o1.getYear().compareTo(o2.getYear());
+                    if (yearResult == 0) {
+                        return o1.getCountry().compareTo(o2.getCountry());
                     }
-                    if (result == 0) {
-                        if (o1.getSex() == null) {
-                            return 1;
-                        } else if (o2.getSex() == null) {
-                            return -1;
-                        }
-                        result = o1.getSex().compareTo(o2.getSex());
-                    }
-                    return result;
+                    return yearResult;
                 }
 
             });
-            for (Education e : values) {
+            for (Classification c : values) {
                 td = doc.createElement("td");
-                Double salary = e.getAverageSalary();
-                if (e.getCountry().equals("sk")) {
+                Double salary = c.getAverageSalary();                
+                if (c.getCountry().equals("sk")) {
                     salary *= EUR_TO_CZK;
                 }
                 td.setTextContent(String.valueOf(salary.intValue()));
@@ -347,7 +332,7 @@ public class EducationServlet extends HttpServlet {
         doc.appendChild(rootElement);
         return doc;
     }
-
+    
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -358,34 +343,34 @@ public class EducationServlet extends HttpServlet {
         return dataToWrite;
     }
 
-    private String getJsonData(EducationManager manager, HttpServletRequest request) throws IOException {
-        List<Education> data = manager.findAllEducations();
+    private String getJsonData(ClassificationManager manager, HttpServletRequest request) throws IOException {
+        List<Classification> data = manager.findAllClassifications();
         //String filterStr = request.getParameter("filter");
         //boolean filter = !(filterStr != null && !Boolean.getBoolean(filterStr));
         boolean filter = true;
         if (filter) {
             String[] years = request.getParameterValues("year");
-            String[] degrees = request.getParameterValues("degree");
+            String[] codes = request.getParameterValues("code");
             String[] countries = request.getParameterValues("country");
             data = filterByYear(data, years);
-            data = filterByDegree(data, degrees);
+            data = filterByCode(data, codes);
             data = filterByCountry(data, countries);
         }
-        for (Education education : data) {
-            if (education.getCountry().equals("sk")) {
-                education.setAverageSalary(education.getAverageSalary() * EUR_TO_CZK);
+        for (Classification classification : data) {
+            if (classification.getCountry().equals("sk")) {
+                classification.setAverageSalary(classification.getAverageSalary() * EUR_TO_CZK);
             }
         }
         return new Gson().toJson(data);
     }
 
-    private List<Education> filterByYear(List<Education> educations, String[] years) {
-        List<Education> filtered = new ArrayList<>();
+    private List<Classification> filterByYear(List<Classification> classifications, String[] years) {
+        List<Classification> filtered = new ArrayList<>();
         if (years != null) {
-            for (Education education : educations) {
+            for (Classification classification : classifications) {
                 for (String year : years) {
-                    if (education.getYear().equals(year)) {
-                        filtered.add(education);
+                    if (classification.getYear().equals(year)) {
+                        filtered.add(classification);
                     }
                 }
             }
@@ -395,13 +380,13 @@ public class EducationServlet extends HttpServlet {
         }
     }
 
-    private List<Education> filterByDegree(List<Education> educations, String[] degrees) {
-        List<Education> filtered = new ArrayList<>();
-        if (degrees != null) {
-            for (Education education : educations) {
-                for (String degree : degrees) {
-                    if (education.getDegree().equals(degree)) {
-                        filtered.add(education);
+    private List<Classification> filterByCode(List<Classification> classifications, String[] codes) {
+        List<Classification> filtered = new ArrayList<>();
+        if (codes != null) {
+            for (Classification classification : classifications) {
+                for (String code : codes) {
+                    if (classification.getCode().equals(code)) {
+                        filtered.add(classification);
                     }
                 }
             }
@@ -411,13 +396,13 @@ public class EducationServlet extends HttpServlet {
         }
     }
 
-    private List<Education> filterByCountry(List<Education> educations, String[] countries) {
-        List<Education> filtered = new ArrayList<>();
+    private List<Classification> filterByCountry(List<Classification> classifications, String[] countries) {
+        List<Classification> filtered = new ArrayList<>();
         if (countries != null) {
-            for (Education education : educations) {
+            for (Classification classification : classifications) {
                 for (String country : countries) {
-                    if (education.getCountry().equals(country)) {
-                        filtered.add(education);
+                    if (classification.getCountry().equals(country)) {
+                        filtered.add(classification);
                     }
                 }
             }
@@ -426,4 +411,5 @@ public class EducationServlet extends HttpServlet {
             return filtered;
         }
     }
+
 }
