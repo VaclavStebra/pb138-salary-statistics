@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="windows-1250" ?><data>	
+    <nadpis>Štruktúra priemernej nominálnej mesačnej mzdy zamestnanca podľa klasifikácie zamestnaní (SK ISCO - 08) v Eur, %</nadpis>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>1 Zákonodarcovia, riadiaci pracovníci</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>1 923</R2012>		
+        <R2013>1 934</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>2 Špecialisti</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>1084</R2012>		
+        <R2013>1129</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>3 Technici a odborní pracovníci</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>973</R2012>		
+        <R2013>997</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>4 Administratívni pracovníci</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>734</R2012>		
+        <R2013>739</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>5 Pracovníci v službách a v obchode</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>624</R2012>		
+        <R2013>630</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>6 Kvalifikovaní pracovníci v poľnohospodárstve, lesníctve a rybárstve</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>591</R2012>		
+        <R2013>610</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>7 Kvalifikovaní pracovníci a remeselníci</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>781</R2012>		
+        <R2013>799</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>8 Operátori a montéri strojov a zariadení</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>723</R2012>		
+        <R2013>757</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>9 Pomocníci a nekvalifikovaní pracovníci</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>480</R2012>		
+        <R2013>496</R2013>	
+    </PRAC_strMzdyZamIsco>	
+    <PRAC_strMzdyZamIsco>		
+        <UKAZ2>0 Príslušníci ozbrojených síl</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R2012>1089</R2012>		
+        <R2013>1111</R2013>	
+    </PRAC_strMzdyZamIsco>
+</data>

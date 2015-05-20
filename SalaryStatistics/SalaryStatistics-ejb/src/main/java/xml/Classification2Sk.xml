@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="windows-1250" ?><data>	
+    <nadpis>Štruktúra priemernej nominálnej mesačnej mzdy zamestnanca podľa klasifikácie zamestnaní (KZAM) v EUR, Sk, %</nadpis>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>1 Zákonodarcovia,ved.a riad.zam.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>24 233</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>1 Zákonodarcovia,ved.a riad.zam.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>804,40</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>1 728,90</R2009>		
+        <R2010>1 790</R2010>		
+        <R2011>1 835</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>2 Vedeckí a odborní duš. zam.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>12 948</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>2 Vedeckí a odborní duš. zam.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>429,80</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>1 026,34</R2009>		
+        <R2010>1 052</R2010>		
+        <R2011>1 082</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>3 Techn.,zdr.,ped. zam.a zam. v príb.odb.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>11 273</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>3 Techn.,zdr.,ped. zam.a zam. v príb.odb.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>374,21</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>849,38</R2009>		
+        <R2010>885</R2010>		
+        <R2011>906</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>4 Nižší admin. zam. (úradníci)</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>8 762</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>4 Nižší admin. zam. (úradníci)</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>290,84</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>646,60</R2009>		
+        <R2010>666</R2010>		
+        <R2011>699</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>5 Prev. zam. v službách a obchode</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>7 469</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>5 Prev. zam. v službách a obchode</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>247,93</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>565,59</R2009>		
+        <R2010>593</R2010>		
+        <R2011>579</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>6 Kvalif.rob. v poľn.,lesn. a v príb.odb.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>7 596</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>6 Kvalif.rob. v poľn.,lesn. a v príb.odb.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>252,14</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>527,36</R2009>		
+        <R2010>537</R2010>		
+        <R2011>574</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>7 Remes. a kvalif.rob. v príb.odb.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>9 328</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>7 Remes. a kvalif.rob. v príb.odb.</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>309,63</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>656,55</R2009>		
+        <R2010>695</R2010>		
+        <R2011>732</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>8 Obsluha strojov a zariadení</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>9 467</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>8 Obsluha strojov a zariadení</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>314,24</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>652,50</R2009>		
+        <R2010>678</R2010>		
+        <R2011>708</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>9 Pomocní a nekvalif. zamestnanci</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>6 208</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>9 Pomocní a nekvalif. zamestnanci</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>206,08</R1998>		
+        <R1999></R1999>		
+        <R2000></R2000>		
+        <R2001></R2001>		
+        <R2002></R2002>		
+        <R2003></R2003>		
+        <R2004></R2004>		
+        <R2005></R2005>		
+        <R2006></R2006>		
+        <R2007></R2007>		
+        <R2008></R2008>		
+        <R2009>431,60</R2009>		
+        <R2010>447</R2010>		
+        <R2011>462</R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>0 Príslušníci armády (profesionálni vojaci)</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>Sk</MJ>		
+        <R1998>.</R1998>		
+        <R1999>.</R1999>		
+        <R2000>.</R2000>		
+        <R2001>.</R2001>		
+        <R2002>.</R2002>		
+        <R2003>.</R2003>		
+        <R2004>.</R2004>		
+        <R2005>.</R2005>		
+        <R2006>.</R2006>		
+        <R2007>.</R2007>		
+        <R2008>.</R2008>		
+        <R2009></R2009>		
+        <R2010></R2010>		
+        <R2011></R2011>	
+    </PRAC_strMzdyZam>	
+    <PRAC_strMzdyZam>		
+        <UKAZ2>0 Príslušníci armády (profesionálni vojaci)</UKAZ2>		
+        <UKAZ1>Priemerná hrubá mesačná mzda - spolu</UKAZ1>		
+        <MJ>EUR</MJ>		
+        <R1998>.</R1998>		
+        <R1999>.</R1999>		
+        <R2000>.</R2000>		
+        <R2001>.</R2001>		
+        <R2002>.</R2002>		
+        <R2003>.</R2003>		
+        <R2004>.</R2004>		
+        <R2005>.</R2005>		
+        <R2006>.</R2006>		
+        <R2007>.</R2007>		
+        <R2008>.</R2008>		
+        <R2009>1 070,10</R2009>		
+        <R2010>1 098</R2010>		
+        <R2011>1 105</R2011>	
+    </PRAC_strMzdyZam>
+</data>

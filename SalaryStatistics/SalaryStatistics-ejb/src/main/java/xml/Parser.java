@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import javax.xml.parsers.DocumentBuilder;
@@ -82,17 +84,23 @@ public class Parser {
     }
     
     public void parseClassificationSk(ClassificationManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
+        Map<String, String> nameMap = new HashMap<>();
+        
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse("src/xml/ClassificationSk.xml");
-
-        NodeList classificationList = doc.getElementsByTagName("PRAC_strMzdyNace");
+        
+        // file with statistics 2012 - 2013
+        Document doc = builder.parse("src/xml/Classification1Sk.xml");
+        
+        NodeList classificationList = doc.getElementsByTagName("PRAC_strMzdyZamIsco");
         for (int i = 0; i < classificationList.getLength(); i++) {
             Element classificationNode = (Element) classificationList.item(i);
 
-            String name = classificationNode.getElementsByTagName("UKAZ1").item(0).getTextContent();
+            String name = classificationNode.getElementsByTagName("UKAZ2").item(0).getTextContent();
             String[] splited = name.split(" ", 2);
-
+            if(! nameMap.containsKey(splited[0]))
+                nameMap.put(splited[0], splited[1]);
+            
             NodeList years = classificationNode.getChildNodes();
 
             for (int j = 0; j < years.getLength(); j++) {
@@ -100,7 +108,7 @@ public class Parser {
                     continue;
                 }
                 Element yearNode = (Element) years.item(j);
-                if("UKAZ".equals(yearNode.getNodeName().substring(0, 4)))
+                if("MJ".equals(yearNode.getNodeName()) || "UKAZ".equals(yearNode.getNodeName().substring(0, 4)))
                     continue;
 
                 String year = yearNode.getNodeName().substring(1);
@@ -115,6 +123,48 @@ public class Parser {
                 Classification classification = new Classification();
                 classification.setCode(splited[0]);
                 classification.setName(splited[1]);
+                classification.setCountry("sk");
+                classification.setYear(year);
+                classification.setAverageSalary(salaryDouble);
+
+                manager.createClassification(classification);
+            }
+        }
+        
+        //file with statistics 1998, 2009 - 2011
+        doc = builder.parse("src/xml/Classification2Sk.xml");
+        classificationList = doc.getElementsByTagName("PRAC_strMzdyZam");
+        for (int i = 0; i < classificationList.getLength(); i++) {
+            Element classificationNode = (Element) classificationList.item(i);
+            
+            if(! "EUR".equals(classificationNode.getElementsByTagName("MJ").item(0).getTextContent()))
+                continue;
+
+            String name = classificationNode.getElementsByTagName("UKAZ2").item(0).getTextContent();
+            String[] splited = name.split(" ", 2);
+            
+            NodeList years = classificationNode.getChildNodes();
+
+            for (int j = 0; j < years.getLength(); j++) {
+                if (years.item(j).getNodeType() == Node.TEXT_NODE) {
+                    continue;
+                }
+                Element yearNode = (Element) years.item(j);
+                if("MJ".equals(yearNode.getNodeName()) || "UKAZ".equals(yearNode.getNodeName().substring(0, 4)))
+                    continue;
+
+                String year = yearNode.getNodeName().substring(1);
+                if (".".equals(yearNode.getTextContent()) || "".equals(yearNode.getTextContent())) {
+                    continue;
+                }
+                String salaryStr = yearNode.getTextContent().replaceAll(" ", "");
+                NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+                Number number = format.parse(salaryStr);
+                double salaryDouble = number.doubleValue();
+                
+                Classification classification = new Classification();
+                classification.setCode(splited[0]);
+                classification.setName(nameMap.get(splited[0]));
                 classification.setCountry("sk");
                 classification.setYear(year);
                 classification.setAverageSalary(salaryDouble);
