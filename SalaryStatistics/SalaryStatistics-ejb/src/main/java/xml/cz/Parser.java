@@ -78,17 +78,6 @@ public class Parser {
             
             if ("1540".equals(value.getElementsByTagName("ukazatel").item(0).getTextContent())) {//1540 - Průměrná hrubá měsíční mzda (na fyzické osoby)
                 if("101".equals(value.getElementsByTagName("charhod").item(0).getTextContent())) {//101 - Hodnota za běžné období
-                    sector = new Sector();
-                    sector.setCountry("cz");
-                    sector.setAverageSalary(Double.parseDouble(value.getElementsByTagName("nhodnota").item(0).getTextContent()));
-                    
-                    for (int j = 0; j < years.getLength(); j++) {
-                        year = (Element) years.item(j);
-                        if(value.getElementsByTagName("cas").item(0).getTextContent().equals(year.getAttribute("ID"))) {
-                            sector.setYear(year.getElementsByTagName("rok").item(0).getTextContent());
-                        }
-                    }
-
                     for (int j = 0; j < names.getLength(); j++) {
                         name = (Element) names.item(j);
                         if(value.getElementsByTagName("druhspec").item(0).getTextContent().equals(name.getAttribute("ID"))) {
@@ -96,14 +85,27 @@ public class Parser {
                             for (int k = 0; k < items.getLength(); k++) {
                                 item =(Element) items.item(k);
                                 if("1".equals(item.getAttribute("PORADI"))) {
-                                    sector.setCode(item.getElementsByTagName("kodzaz").item(0).getTextContent());
-                                    sector.setName(item.getElementsByTagName("textup").item(0).getTextContent());
+                                    if(!("2".equals(item.getElementsByTagName("kodzaz").item(0).getTextContent()))) {
+                                        sector = new Sector();
+                                        sector.setCountry("cz");
+                                        sector.setAverageSalary(Double.parseDouble(value.getElementsByTagName("nhodnota").item(0).getTextContent()));
+
+                                        for (int l = 0; l < years.getLength(); l++) {
+                                            year = (Element) years.item(l);
+                                            if(value.getElementsByTagName("cas").item(0).getTextContent().equals(year.getAttribute("ID"))) {
+                                                sector.setYear(year.getElementsByTagName("rok").item(0).getTextContent());
+                                            }
+                                        }
+                                        
+                                        sector.setCode(item.getElementsByTagName("kodzaz").item(0).getTextContent());
+                                        sector.setName(item.getElementsByTagName("text").item(0).getTextContent());
+                                        manager.createSector(sector);
+                                    }
                                 }
                             }
                         }
                     }
-                    
-                    manager.createSector(sector);
+                   
                 }
             }
         }               
