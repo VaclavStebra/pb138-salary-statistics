@@ -38,7 +38,7 @@ var showAgeDataInGraph = function (data) {
         var sex = sexes[s];
         for (var inter in intervals) {
             var interval = intervals[inter];
-            
+
             var series = [];
             for (var index in countries) {
                 series.push({name: countries[index], data: []});
@@ -135,9 +135,20 @@ var showAgeDataBySex = function (data) {
                     }
                 }
                 filteredBySex.sort(compare);
-                for (var index in filteredBySex) {
-                    var entry = filteredBySex[index];
-                    serie.data.push(entry.averageSalary);
+                for (var y in years) {
+                    var year = years[y];
+                    var found = false;
+                    for (var index in filteredBySex) {
+                        var entry = filteredBySex[index];
+                        if (entry.year === year) {
+                            serie.data.push(entry.averageSalary);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        serie.data.push(null);
+                    }
                 }
                 if (serie.name === 'undefined') {
                     serie.name = 'spolu';
@@ -203,6 +214,8 @@ var showAgeDataByYearAndSex = function (data) {
                 var entry = filteredData[i];
                 if (entry.sex === sex) {
                     filteredByCountryAndSex.push(entry);
+                } else if (entry.sex === undefined && sex === "undefined") {
+                    filteredByCountryAndSex.push(entry);
                 }
             }
 
@@ -216,9 +229,20 @@ var showAgeDataByYearAndSex = function (data) {
                     }
                 }
                 filteredByInterval.sort(compare);
-                for (var index in filteredByInterval) {
-                    var entry = filteredByInterval[index];
-                    serie.data.push(entry.averageSalary);
+                for (var y in years) {
+                    var year = years[y];
+                    var found = false;
+                    for (var i in filteredByInterval) {
+                        var entry = filteredByInterval[i];
+                        if (entry.year === year) {
+                            serie.data.push(entry.averageSalary);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        serie.data.push(null);
+                    }
                 }
             }
             var div = $('<div id="graph-data' + (((c + 1) * (s + 1)) + countries.length + 1) + '" style="width:100%; height:400px;"></div>');
@@ -226,7 +250,7 @@ var showAgeDataByYearAndSex = function (data) {
 
             $("#graph-data" + (((c + 1) * (s + 1)) + countries.length + 1)).highcharts({
                 title: {
-                    text: 'Rust platu (' + sex + ') dle veku ' + country
+                    text: 'Rust platu (' + ((sex !== "undefined") ? sex : "spolu") + ') dle veku ' + country
                 },
                 xAxis: {
                     categories: years

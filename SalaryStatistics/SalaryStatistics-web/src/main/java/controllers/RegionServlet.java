@@ -114,7 +114,7 @@ public class RegionServlet extends HttpServlet {
         Element div = doc.createElement("div");
         div.setAttribute("class", "form-group");
 
-        Set<String> years = new HashSet<>();
+        Set<String> years = new TreeSet<>();
         Set<String> names = new HashSet<>();
         Set<String> countries = new HashSet<>();
         List<Region> regions = manager.findAllRegions();
@@ -275,13 +275,13 @@ public class RegionServlet extends HttpServlet {
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
-            th.setAttribute("colspan", String.valueOf(countries.size() * sexes.size()));
+            th.setAttribute("colspan", String.valueOf(countries.size() * (sexes.size() + 1)));
             th.setTextContent(year);
             theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
         theadRow = doc.createElement("tr");
-        for (int i = 0; i < years.size() * sexes.size(); i++) {
+        for (int i = 0; i < years.size() * (sexes.size() + 1); i++) {
             for (String country : countries) {
                 th = doc.createElement("th");
                 th.setTextContent(country);
@@ -296,6 +296,9 @@ public class RegionServlet extends HttpServlet {
                 th.setTextContent(sex);
                 theadRow.appendChild(th);
             }
+            th = doc.createElement("th");
+            th.setTextContent("spolu");
+            theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
 
@@ -325,26 +328,62 @@ public class RegionServlet extends HttpServlet {
                         result = o1.getCountry().compareTo(o2.getCountry());
                     }
                     if (result == 0) {
+                        if (o1.getSex() == null) {
+                            return 1;
+                        } else if (o2.getSex() == null) {
+                            return -1;
+                        }
                         result = o1.getSex().compareTo(o2.getSex());
                     }
                     return result;
                 }
 
             });
-            for (Region r : values) {
-                td = doc.createElement("td");
-                Double salary = r.getAverageSalary();
-                if (r.getCountry().equals("sk")) {
-                    salary *= EUR_TO_CZK;
+            for (String year : years) {
+                for (String country : countries) {
+                    for (String sex : sexes) {
+                        td = doc.createElement("td");
+                        boolean found = false;
+                        for (Region r : values) {
+                            if (r.getYear().equals(year) && r.getCountry().equals(country) && r.getSex().equals(sex)) {
+                                Double salary = r.getAverageSalary();                
+                                if (r.getCountry().equals("sk")) {
+                                    salary *= EUR_TO_CZK;
+                                }
+                                td.setTextContent(String.valueOf(salary.intValue()));
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            td.setTextContent("-");
+                        }
+                        tr.appendChild(td);
+                    }
+                    td = doc.createElement("td");
+                    boolean found = false;
+                    for (Region r : values) {
+                        if (r.getYear().equals(year) && r.getCountry().equals(country) && r.getSex()==null) {
+                            Double salary = r.getAverageSalary();                
+                            if (r.getCountry().equals("sk")) {
+                                salary *= EUR_TO_CZK;
+                            }
+                            td.setTextContent(String.valueOf(salary.intValue()));
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        td.setTextContent("-");
+                    }
+                    tr.appendChild(td);
                 }
-                td.setTextContent(String.valueOf(salary.intValue()));
-                tr.appendChild(td);
             }
             tbody.appendChild(tr);
         }
 
         rootElement.appendChild(thead).appendChild(tbody);
-        rootElement.setAttribute("class", "table");
+        rootElement.setAttribute("class", "table table-hover");
         doc.appendChild(rootElement);
         return doc;
     }

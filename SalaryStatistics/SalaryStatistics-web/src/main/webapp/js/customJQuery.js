@@ -2,6 +2,9 @@ $(document).ready(function () {
 
     var url = $("[data-graph-url]").data("graph-url");
     $.get(url + "/data?" + $("#options form").serialize(), function (data) {
+        if($(".message").length > 0) {
+            return;
+        }
         switch (url) {
             case "sector":
                 showSectorDataByCountry(data);

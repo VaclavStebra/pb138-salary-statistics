@@ -47,27 +47,27 @@ import org.w3c.dom.Element;
  */
 @WebServlet(urlPatterns = {"/age/*"})
 public class AgeServlet extends HttpServlet {
-    
+
     private static final int EUR_TO_CZK = 25;
-    
+
     Comparator intervalComparator = new Comparator<String>() {
-            @Override
-            public int compare(String one, String two) {
-                if(one.equals(two)) {
-                    return 0;
-                }
-                String[] parts1 = one.split("-");
-                String[] parts2 = two.split("-");
-                if(parts1[0].equals("Do")) {
-                    return -1;
-                }
-                if(parts2[0].equals("Do")) {
-                    return 1;
-                }
-                return parts1[0].compareTo(parts2[0]);
-                //return 1;
+        @Override
+        public int compare(String one, String two) {
+            if (one.equals(two)) {
+                return 0;
             }
-        };
+            String[] parts1 = one.split("-");
+            String[] parts2 = two.split("-");
+            if (parts1[0].equals("Do")) {
+                return -1;
+            }
+            if (parts2[0].equals("Do")) {
+                return 1;
+            }
+            return parts1[0].compareTo(parts2[0]);
+            //return 1;
+        }
+    };
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -112,7 +112,7 @@ public class AgeServlet extends HttpServlet {
             String[] years = request.getParameterValues("year");
             String[] intervals = request.getParameterValues("interval");
             String[] countries = request.getParameterValues("country");
-            if(years == null || intervals == null || countries == null) {
+            if (years == null || intervals == null || countries == null) {
                 return returnMessage();
             }
             ages = filterByCountry(ages, countries);
@@ -121,7 +121,7 @@ public class AgeServlet extends HttpServlet {
         }
         return returnTableData(ages);
     }
-    
+
     private Document returnMessage() throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -301,20 +301,19 @@ public class AgeServlet extends HttpServlet {
 
         Element thead = doc.createElement("thead");
         Element theadRow = doc.createElement("tr");
-        Element theadRow2 = doc.createElement("tr");
         Element th = doc.createElement("th");
-        th.setTextContent("Interval");
         th.setAttribute("rowspan", "3");
+        th.setTextContent("Interval");
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
-            th.setAttribute("colspan", String.valueOf(countries.size() * sexes.size()));
+            th.setAttribute("colspan", String.valueOf(countries.size() * (sexes.size() + 1)));
             th.setTextContent(year);
             theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
         theadRow = doc.createElement("tr");
-        for (int i = 0; i < years.size() * sexes.size(); i++) {
+        for (int i = 0; i < years.size() * (sexes.size() + 1); i++) {
             for (String country : countries) {
                 th = doc.createElement("th");
                 th.setTextContent(country);
@@ -329,6 +328,9 @@ public class AgeServlet extends HttpServlet {
                 th.setTextContent(sex);
                 theadRow.appendChild(th);
             }
+            th = doc.createElement("th");
+            th.setTextContent("spolu");
+            theadRow.appendChild(th);
         }
         thead.appendChild(theadRow);
 
@@ -354,8 +356,8 @@ public class AgeServlet extends HttpServlet {
                 @Override
                 public int compare(Age o1, Age o2) {
                     int result = o1.getYear().compareTo(o2.getYear());
-                    if(result == 0) {
-                      result = o1.getCountry().compareTo(o2.getCountry());
+                    if (result == 0) {
+                        result = o1.getCountry().compareTo(o2.getCountry());
                     }
                     if (result == 0) {
                         if (o1.getSex() == null) {
@@ -369,21 +371,51 @@ public class AgeServlet extends HttpServlet {
                 }
 
             });
-            for (Age a : values) {
-                td = doc.createElement("td");
-                //td.setTextContent(a.getAverageSalary().toString());
-                Double salary = a.getAverageSalary();
-                if (a.getCountry().equals("sk")) {
-                    salary *= EUR_TO_CZK;
+            for (String year : years) {
+                for (String country : countries) {
+                    for (String sex : sexes) {
+                        td = doc.createElement("td");
+                        boolean found = false;
+                        for (Age a : values) {
+                            if (a.getYear().equals(year) && a.getCountry().equals(country) && a.getSex().equals(sex)) {
+                                Double salary = a.getAverageSalary();                
+                                if (a.getCountry().equals("sk")) {
+                                    salary *= EUR_TO_CZK;
+                                }
+                                td.setTextContent(String.valueOf(salary.intValue()));
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            td.setTextContent("-");
+                        }
+                        tr.appendChild(td);
+                    }
+                    td = doc.createElement("td");
+                    boolean found = false;
+                    for (Age a : values) {
+                        if (a.getYear().equals(year) && a.getCountry().equals(country) && a.getSex()==null) {
+                            Double salary = a.getAverageSalary();                
+                            if (a.getCountry().equals("sk")) {
+                                salary *= EUR_TO_CZK;
+                            }
+                            td.setTextContent(String.valueOf(salary.intValue()));
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        td.setTextContent("-");
+                    }
+                    tr.appendChild(td);
                 }
-                td.setTextContent(String.valueOf(salary.intValue()));
-                tr.appendChild(td);
             }
             tbody.appendChild(tr);
         }
 
         rootElement.appendChild(thead).appendChild(tbody);
-        rootElement.setAttribute("class", "table");
+        rootElement.setAttribute("class", "table table-hover");
         doc.appendChild(rootElement);
         return doc;
     }
