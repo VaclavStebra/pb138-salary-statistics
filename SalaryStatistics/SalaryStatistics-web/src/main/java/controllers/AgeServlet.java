@@ -4,14 +4,16 @@ import com.google.gson.Gson;
 import dao.Age;
 import dao.AgeManager;
 import dao.AgeManagerImpl;
-import helpers.CurrencyReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -35,6 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -45,7 +48,7 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/age/*"})
 public class AgeServlet extends HttpServlet {
     
-    private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
+    private static final int EUR_TO_CZK = 25;
     
     Comparator intervalComparator = new Comparator<String>() {
             @Override

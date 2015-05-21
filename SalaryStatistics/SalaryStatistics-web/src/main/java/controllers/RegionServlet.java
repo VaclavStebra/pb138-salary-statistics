@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import dao.Region;
 import dao.RegionManager;
 import dao.RegionManagerImpl;
-import helpers.CurrencyReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -51,7 +50,7 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/region/*"})
 public class RegionServlet extends HttpServlet {
     
-    private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
+    private static final int EUR_TO_CZK = 25;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

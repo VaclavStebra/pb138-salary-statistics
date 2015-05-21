@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import dao.Classification;
 import dao.ClassificationManager;
 import dao.ClassificationManagerImpl;
-import helpers.CurrencyReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/classification/*"})
 public class ClassificationServlet extends HttpServlet {
         
-    private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
+    private static final int EUR_TO_CZK = 25;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
