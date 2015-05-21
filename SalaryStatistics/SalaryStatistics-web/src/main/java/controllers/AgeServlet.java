@@ -48,6 +48,8 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/age/*"})
 public class AgeServlet extends HttpServlet {
     
+    private static final int EUR_TO_CZK = 25;
+    
     Comparator intervalComparator = new Comparator<String>() {
             @Override
             public int compare(String one, String two) {
@@ -286,7 +288,7 @@ public class AgeServlet extends HttpServlet {
         Element theadRow2 = doc.createElement("tr");
         Element th = doc.createElement("th");
         th.setTextContent("Interval");
-        th.setAttribute("rowspan", "2");
+        th.setAttribute("rowspan", "3");
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
@@ -335,11 +337,16 @@ public class AgeServlet extends HttpServlet {
 
                 @Override
                 public int compare(Age o1, Age o2) {
-                    int result = o1.getAgeFrom().compareTo(o2.getAgeFrom());
+                    int result = o1.getYear().compareTo(o2.getYear());
                     if(result == 0) {
                       result = o1.getCountry().compareTo(o2.getCountry());
                     }
                     if (result == 0) {
+                        if (o1.getSex() == null) {
+                            return 1;
+                        } else if (o2.getSex() == null) {
+                            return -1;
+                        }
                         result = o1.getSex().compareTo(o2.getSex());
                     }
                     return result;
@@ -348,7 +355,12 @@ public class AgeServlet extends HttpServlet {
             });
             for (Age a : values) {
                 td = doc.createElement("td");
-                td.setTextContent(a.getAverageSalary().toString());
+                //td.setTextContent(a.getAverageSalary().toString());
+                Double salary = a.getAverageSalary();
+                if (a.getCountry().equals("sk")) {
+                    salary *= EUR_TO_CZK;
+                }
+                td.setTextContent(String.valueOf(salary.intValue()));
                 tr.appendChild(td);
             }
             tbody.appendChild(tr);
@@ -360,15 +372,6 @@ public class AgeServlet extends HttpServlet {
         return doc;
     }
 
-    /*private void writeDocumentToResponse(Document doc, HttpServletResponse response) throws TransformerFactoryConfigurationError {
-     try {
-     String dataToWrite = documentToString(doc);
-     response.setCharacterEncoding("UTF-8");
-     response.getWriter().write(dataToWrite);
-     } catch (IllegalArgumentException | TransformerException | IOException ex) {
-     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     }*/
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -389,6 +392,11 @@ public class AgeServlet extends HttpServlet {
             data = filterByYear(data, years);
             data = filterByInterval(data, intervals);
             data = filterByCountry(data, countries);
+        }
+        for (Age age : data) {
+            if (age.getCountry().equals("sk")) {
+                age.setAverageSalary(age.getAverageSalary() * EUR_TO_CZK);
+            }
         }
         return new Gson().toJson(data);
     }

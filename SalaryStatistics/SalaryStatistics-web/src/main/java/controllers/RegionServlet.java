@@ -49,6 +49,8 @@ import org.w3c.dom.Element;
  */
 @WebServlet(urlPatterns = {"/region/*"})
 public class RegionServlet extends HttpServlet {
+    
+    private static final int EUR_TO_CZK = 25;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -327,10 +329,15 @@ public class RegionServlet extends HttpServlet {
                 }
 
             });
-            for (Region e : values) {
+            for (Region r : values) {
                 td = doc.createElement("td");
-                Double salary = e.getAverageSalary();
-                td.setTextContent(String.valueOf(salary));
+                /*Double salary = e.getAverageSalary();
+                td.setTextContent(String.valueOf(salary));*/
+                Double salary = r.getAverageSalary();
+                if (r.getCountry().equals("sk")) {
+                    salary *= EUR_TO_CZK;
+                }
+                td.setTextContent(String.valueOf(salary.intValue()));
                 tr.appendChild(td);
             }
             tbody.appendChild(tr);
@@ -364,6 +371,11 @@ public class RegionServlet extends HttpServlet {
             data = filterByYear(data, years);
             data = filterByName(data, names);
             data = filterByCountry(data, countries);
+        }
+        for (Region region : data) {
+            if (region.getCountry().equals("sk")) {
+                region.setAverageSalary(region.getAverageSalary() * EUR_TO_CZK);
+            }
         }
         return new Gson().toJson(data);
     }
