@@ -13,14 +13,14 @@ $(document).ready(function () {
                 showEducationDataInGraph(data);
                 break;
             case "region":
-                showRegionDataInGraph(data);
                 showRegionDataBySex(data);
                 showRegionDataByYearAndSex(data);
+                showRegionDataInGraph(data);
                 break;
             case "age":
-                showAgeDataInGraph(data);
                 showAgeDataBySex(data);
                 showAgeDataByYearAndSex(data);
+                showAgeDataInGraph(data);
                 break;
             case "classification":
                 showClassificationDataByCountry(data);

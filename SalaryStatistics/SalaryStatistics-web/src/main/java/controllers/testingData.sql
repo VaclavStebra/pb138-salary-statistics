@@ -46,3 +46,18 @@ insert into "Region" ("name", "country", "year", "averageSalary", "sex") VALUES
 ('Středočeský kraj', 'cz', '2011', 22046, 'zeny'),
 ('Jihočeský kraj', 'cz', '2011', 20171, 'zeny'),
 ('Plzeňský kraj', 'cz', '2011', 21264, 'zeny')
+
+insert into "Age" ("ageFrom", "ageTo", "country", "year", "sex", "averageSalary") VALUES
+(0, 19, 'cz', '2012', 'male', 15298),
+(0, 19, 'cz', '2012', 'female', 13490),
+(20, 24, 'cz', '2012', 'male', 18363),
+(20, 24, 'cz', '2012', 'female', 16277),
+(25, 29, 'cz', '2012', 'male', 24398),
+(25, 29, 'cz', '2012', 'female', 22758),
+(0, 19, 'cz', '2011', 'male', 14784),
+(0, 19, 'cz', '2011', 'female', 12822),
+(20, 24, 'cz', '2011', 'male', 17962),
+(20, 24, 'cz', '2011', 'female', 16061),
+(25, 29, 'cz', '2011', 'male', 24041),
+(25, 29, 'cz', '2011', 'female', 22647)
+

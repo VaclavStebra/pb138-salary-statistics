@@ -122,6 +122,9 @@ public class RegionServlet extends HttpServlet {
             countries.add(region.getCountry());
         }
 
+        Element p = doc.createElement("p");
+        p.setTextContent("Roky:");
+        div.appendChild(p);
         String[] yearsParametersValues = request.getParameterValues("year");
         for (String year : years) {
             Element label = doc.createElement("label");
@@ -144,9 +147,24 @@ public class RegionServlet extends HttpServlet {
             div.appendChild(label);
         }
 
+        p = doc.createElement("p");
+        Element btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);
         div.appendChild(doc.createElement("br"));
 
         String[] degreesParametersValues = request.getParameterValues("degree");
+        p = doc.createElement("p");
+        p.setTextContent("Regiony:");
+        div.appendChild(p);
         for (String name : names) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -168,9 +186,23 @@ public class RegionServlet extends HttpServlet {
             div.appendChild(label);
         }
 
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "degree");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "degree");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);
         div.appendChild(doc.createElement("br"));
 
         String[] countryParametersValues = request.getParameterValues("country");
+        p = doc.createElement("p");
+        p.setTextContent("Zeme:");
         for (String country : countries) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -192,6 +224,18 @@ public class RegionServlet extends HttpServlet {
             div.appendChild(label);
         }
 
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);
         rootElement.appendChild(div);
 
         Element submit = doc.createElement("input");

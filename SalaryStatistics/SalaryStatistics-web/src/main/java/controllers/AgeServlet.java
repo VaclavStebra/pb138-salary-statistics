@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +47,25 @@ import org.w3c.dom.Element;
  */
 @WebServlet(urlPatterns = {"/age/*"})
 public class AgeServlet extends HttpServlet {
+    
+    Comparator intervalComparator = new Comparator<String>() {
+            @Override
+            public int compare(String one, String two) {
+                if(one.equals(two)) {
+                    return 0;
+                }
+                String[] parts1 = one.split("-");
+                String[] parts2 = two.split("-");
+                if(parts1[0].equals("Do")) {
+                    return -1;
+                }
+                if(parts2[0].equals("Do")) {
+                    return 1;
+                }
+                return parts1[0].compareTo(parts2[0]);
+                //return 1;
+            }
+        };
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -69,7 +89,7 @@ public class AgeServlet extends HttpServlet {
                     request.setAttribute("table", documentToString(tableData));
                     request.setAttribute("graphUrl", "age");
                     request.getRequestDispatcher("/template.jsp").forward(request, response);
-                }catch (ParserConfigurationException | TransformerException | TransformerFactoryConfigurationError | IllegalArgumentException ex) {
+                } catch (ParserConfigurationException | TransformerException | TransformerFactoryConfigurationError | IllegalArgumentException ex) {
                     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
@@ -79,14 +99,14 @@ public class AgeServlet extends HttpServlet {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/json");
                 response.getWriter().write(data);
-             }
-             break;
+            }
+            break;
         }
     }
 
     private Document getData(AgeManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
         List<Age> ages = manager.findAllAges();
-        if(filter) {
+        if (filter) {
             String[] years = request.getParameterValues("year");
             String[] intervals = request.getParameterValues("interval");
             String[] countries = request.getParameterValues("country");
@@ -104,12 +124,12 @@ public class AgeServlet extends HttpServlet {
         Element rootElement = doc.createElement("form");
         rootElement.setAttribute("method", "GET");
         rootElement.setAttribute("action", request.getContextPath() + "/age");
-        
+
         Element div = doc.createElement("div");
         div.setAttribute("class", "form-group");
 
         Set<String> years = new HashSet<>();
-        Set<String> ageIntervals = new HashSet<>();
+        Set<String> ageIntervals = new TreeSet<String>(intervalComparator);
         Set<String> countries = new HashSet<>();
         List<Age> ages = manager.findAllAges();
         for (Age age : ages) {
@@ -118,6 +138,9 @@ public class AgeServlet extends HttpServlet {
             countries.add(age.getCountry());
         }
 
+        Element p = doc.createElement("p");
+        p.setTextContent("Roky:");
+        div.appendChild(p);
         String[] yearsParametersValues = request.getParameterValues("year");
         for (String year : years) {
             Element label = doc.createElement("label");
@@ -140,23 +163,38 @@ public class AgeServlet extends HttpServlet {
             div.appendChild(label);
         }
 
+        p = doc.createElement("p");
+        Element btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "year");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);
         div.appendChild(doc.createElement("br"));
 
         String[] intervalsParametersValues = request.getParameterValues("interval");
+        p = doc.createElement("p");
+        p.setTextContent("Intervaly:");
+        div.appendChild(p);
         for (String ageInterval : ageIntervals) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
             input.setAttribute("name", "interval");
-            if(intervalsParametersValues != null) {
-                for(String parameterInterval : intervalsParametersValues) {
-                    if(parameterInterval.equals(ageInterval)) {
+            if (intervalsParametersValues != null) {
+                for (String parameterInterval : intervalsParametersValues) {
+                    if (parameterInterval.equals(ageInterval)) {
                         input.setAttribute("checked", "");
                     }
                 }
             }
-            if(checkAll) {
+            if (checkAll) {
                 input.setAttribute("checked", "");
             }
             input.setAttribute("value", ageInterval);
@@ -164,10 +202,25 @@ public class AgeServlet extends HttpServlet {
             label.appendChild(input);
             div.appendChild(label);
         }
-        
+
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "interval");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "interval");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);
         div.appendChild(doc.createElement("br"));
-        
+
         String[] countryParametersValues = request.getParameterValues("country");
+        p = doc.createElement("p");
+        p.setTextContent("Zeme:");
+        div.appendChild(p);
         for (String country : countries) {
             Element label = doc.createElement("label");
             label.setAttribute("class", "checkbox-inline");
@@ -189,6 +242,18 @@ public class AgeServlet extends HttpServlet {
             div.appendChild(label);
         }
 
+        p = doc.createElement("p");
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-nothing-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-warning");
+        btn.setTextContent("Zrusit vse");
+        p.appendChild(btn);
+        btn = doc.createElement("button");
+        btn.setAttribute("data-show-all-options", "country");
+        btn.setAttribute("class", "btn btn-xs btn-success");
+        btn.setTextContent("Vybrat vse");
+        p.appendChild(btn);
+        div.appendChild(p);
         rootElement.appendChild(div);
 
         Element submit = doc.createElement("input");
@@ -203,8 +268,12 @@ public class AgeServlet extends HttpServlet {
 
     private Document returnTableData(List<Age> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
+        SortedSet<String> countries = new TreeSet<>();
+        SortedSet<String> sexes = new TreeSet<>();
         for (Age age : data) {
             years.add(age.getYear());
+            countries.add(age.getCountry());
+            sexes.add(age.getSex());
         }
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -221,23 +290,32 @@ public class AgeServlet extends HttpServlet {
         theadRow.appendChild(th);
         for (String year : years) {
             th = doc.createElement("th");
+            th.setAttribute("colspan", String.valueOf(countries.size() * sexes.size()));
             th.setTextContent(year);
-            th.setAttribute("colspan", "2");
             theadRow.appendChild(th);
-            
-            th = doc.createElement("th");
-            th.setTextContent("MuĹľi");
-            theadRow2.appendChild(th);
-            
-            th = doc.createElement("th");
-            th.setTextContent("Ĺ˝eny");
-            theadRow2.appendChild(th);
         }
         thead.appendChild(theadRow);
-        thead.appendChild(theadRow2);
+        theadRow = doc.createElement("tr");
+        for (int i = 0; i < years.size() * sexes.size(); i++) {
+            for (String country : countries) {
+                th = doc.createElement("th");
+                th.setTextContent(country);
+                theadRow.appendChild(th);
+            }
+        }
+        thead.appendChild(theadRow);
+        theadRow = doc.createElement("tr");
+        for (int i = 0; i < years.size(); i++) {
+            for (String sex : sexes) {
+                th = doc.createElement("th");
+                th.setTextContent(sex);
+                theadRow.appendChild(th);
+            }
+        }
+        thead.appendChild(theadRow);
 
         Element tbody = doc.createElement("tbody");
-        Map<String, List<Age>> ages = new HashMap<>();
+        Map<String, List<Age>> ages = new TreeMap<String, List<Age>>(intervalComparator);
         for (Age age : data) {
             if (ages.containsKey(convertToInterval(age))) {
                 ages.get(convertToInterval(age)).add(age);
@@ -247,7 +325,7 @@ public class AgeServlet extends HttpServlet {
                 ages.put(convertToInterval(age), a);
             }
         }
-        for (Entry<String, List<Age>> age : ages.entrySet()) {
+        for (Map.Entry<String, List<Age>> age : ages.entrySet()) {
             Element tr = doc.createElement("tr");
             Element td = doc.createElement("td");
             td.setTextContent(age.getKey());
@@ -257,7 +335,14 @@ public class AgeServlet extends HttpServlet {
 
                 @Override
                 public int compare(Age o1, Age o2) {
-                    return o1.getAgeFrom().compareTo(o2.getAgeFrom());
+                    int result = o1.getAgeFrom().compareTo(o2.getAgeFrom());
+                    if(result == 0) {
+                      result = o1.getCountry().compareTo(o2.getCountry());
+                    }
+                    if (result == 0) {
+                        result = o1.getSex().compareTo(o2.getSex());
+                    }
+                    return result;
                 }
 
             });
@@ -276,15 +361,14 @@ public class AgeServlet extends HttpServlet {
     }
 
     /*private void writeDocumentToResponse(Document doc, HttpServletResponse response) throws TransformerFactoryConfigurationError {
-        try {
-            String dataToWrite = documentToString(doc);
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(dataToWrite);
-        } catch (IllegalArgumentException | TransformerException | IOException ex) {
-            Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-    
+     try {
+     String dataToWrite = documentToString(doc);
+     response.setCharacterEncoding("UTF-8");
+     response.getWriter().write(dataToWrite);
+     } catch (IllegalArgumentException | TransformerException | IOException ex) {
+     Logger.getLogger(SectorServlet.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     }*/
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -294,7 +378,7 @@ public class AgeServlet extends HttpServlet {
         String dataToWrite = sw.toString();
         return dataToWrite;
     }
-    
+
     private String getJsonData(AgeManager manager, HttpServletRequest request) throws IOException {
         List<Age> data = manager.findAllAges();
         boolean filter = true;
@@ -365,17 +449,17 @@ public class AgeServlet extends HttpServlet {
         }
         return age.getAgeFrom().toString() + "-" + age.getAgeTo().toString();
     }
-    
+
     private String[] convertFromInterval(String interval) {
         String parts[] = interval.split("-", 2);
-        if(parts[0].equals("Do")) {
+        if (parts[0].equals("Do")) {
             parts[0] = "0";
-        } else if(parts[1].equals("a vĂ­ce")) {
+        } else if (parts[1].equals("a vĂ­ce")) {
             parts[1] = "100";
         }
         return parts;
     }
-    
+
     private List<Age> filterByCountry(List<Age> ages, String[] countries) {
         List<Age> filtered = new ArrayList<>();
         if (countries != null) {
