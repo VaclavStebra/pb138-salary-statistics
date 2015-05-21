@@ -333,8 +333,6 @@ public class RegionServlet extends HttpServlet {
             });
             for (Region r : values) {
                 td = doc.createElement("td");
-                /*Double salary = e.getAverageSalary();
-                td.setTextContent(String.valueOf(salary));*/
                 Double salary = r.getAverageSalary();
                 if (r.getCountry().equals("sk")) {
                     salary *= EUR_TO_CZK;

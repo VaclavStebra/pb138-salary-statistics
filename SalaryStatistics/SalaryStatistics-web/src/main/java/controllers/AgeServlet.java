@@ -112,11 +112,25 @@ public class AgeServlet extends HttpServlet {
             String[] years = request.getParameterValues("year");
             String[] intervals = request.getParameterValues("interval");
             String[] countries = request.getParameterValues("country");
+            if(years == null || intervals == null || countries == null) {
+                return returnMessage();
+            }
             ages = filterByCountry(ages, countries);
             ages = filterByYear(ages, years);
             ages = filterByInterval(ages, intervals);
         }
         return returnTableData(ages);
+    }
+    
+    private Document returnMessage() throws ParserConfigurationException {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element message = doc.createElement("h4");
+        message.setAttribute("class", "bg-danger message");
+        message.setTextContent("Je potreba zaskrtnout alespon jednu hodnotu pro kazdej vyber.");
+        doc.appendChild(message);
+        return doc;
     }
 
     private Document getOptions(AgeManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
@@ -424,10 +438,8 @@ public class AgeServlet extends HttpServlet {
         Set<String[]> intervalParts = new HashSet<>();
         if (intervals != null) {
             for (String interval : intervals) {
-                System.out.println(interval);
                 String[] parts = convertFromInterval(interval);
                 intervalParts.add(parts);
-                System.out.println(parts[0] + " - " + parts[1]);
             }
             for (Age age : ages) {
                 for (String[] interval : intervalParts) {
