@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 public class Parser {
     public static void main(String[] args) throws IOException, SQLException, SAXException, ParserConfigurationException {
         Properties pro = new Properties();
-        pro.load(new FileInputStream("src/configuration/jdbc.properties"));
+        pro.load(new FileInputStream("src/main/java/configuration/jdbc.properties"));
 
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl(pro.getProperty("url"));
@@ -48,7 +48,7 @@ public class Parser {
         
         Parser parser = new Parser();
         parser.parseSector(sectorManager);
-        parser.parseClassification(classificationManager);
+       // parser.parseClassification(classificationManager);
         parser.parseRegion(regionManager);
         
         ds.close();
@@ -57,7 +57,7 @@ public class Parser {
     public void parseSector(SectorManagerImpl manager) throws SAXException, ParserConfigurationException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse("./PRA0010UU.xml");
+        Document doc = builder.parse("src/main/java/xml/cz/PRA0010UU.xml");
         
         NodeList values = doc.getElementsByTagName("hodnota");
         Element value = null;
@@ -77,7 +77,7 @@ public class Parser {
             value = (Element) values.item(i);
             
             if ("1540".equals(value.getElementsByTagName("ukazatel").item(0).getTextContent())) {//1540 - Průměrná hrubá měsíční mzda (na fyzické osoby)
-                if("101".equals(value.getElementsByTagName("chathod").item(0).getTextContent())) {//101 - Hodnota za běžné období
+                if("101".equals(value.getElementsByTagName("charhod").item(0).getTextContent())) {//101 - Hodnota za běžné období
                     sector = new Sector();
                     sector.setCountry("cz");
                     sector.setAverageSalary(Double.parseDouble(value.getElementsByTagName("nhodnota").item(0).getTextContent()));
@@ -112,7 +112,7 @@ public class Parser {
     public void parseClassification(ClassificationManagerImpl manager) throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse("./PRA0021UU.xml");
+        Document doc = builder.parse("src/main/java/xml/cz/PRA0021UU.xml");
         
         NodeList values = doc.getElementsByTagName("hodnota");
         Element value = null;
@@ -155,7 +155,7 @@ public class Parser {
     public void parseRegion(RegionManagerImpl manager) throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse("./PRA0031PU_KR.xml");
+        Document doc = builder.parse("src/main/java/xml/cz/PRA0031PU_KR.xml");
         
         NodeList values = doc.getElementsByTagName("hodnota");
         Element value = null;

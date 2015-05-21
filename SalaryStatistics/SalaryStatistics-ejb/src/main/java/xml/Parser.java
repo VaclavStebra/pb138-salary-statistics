@@ -43,7 +43,7 @@ public class Parser {
     public void parseSectorSk(SectorManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse("src/xml/SectorSk.xml");
+        Document doc = builder.parse("src/main/java/xml/SectorSk.xml");
 
         NodeList sectorList = doc.getElementsByTagName("PRAC_mzdyNace");
         for (int i = 0; i < sectorList.getLength(); i++) {
@@ -90,7 +90,7 @@ public class Parser {
         DocumentBuilder builder = factory.newDocumentBuilder();
         
         // file with statistics 2012 - 2013
-        Document doc = builder.parse("src/xml/Classification1Sk.xml");
+        Document doc = builder.parse("src/main/java/xml/Classification1Sk.xml");
         
         NodeList classificationList = doc.getElementsByTagName("PRAC_strMzdyZamIsco");
         for (int i = 0; i < classificationList.getLength(); i++) {
@@ -132,7 +132,7 @@ public class Parser {
         }
         
         //file with statistics 1998, 2009 - 2011
-        doc = builder.parse("src/xml/Classification2Sk.xml");
+        doc = builder.parse("src/main/java/xml/Classification2Sk.xml");
         classificationList = doc.getElementsByTagName("PRAC_strMzdyZam");
         for (int i = 0; i < classificationList.getLength(); i++) {
             Element classificationNode = (Element) classificationList.item(i);
@@ -177,7 +177,7 @@ public class Parser {
     public void parseEducationSk(EducationManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse("src/xml/EducationSk.xml");
+        Document doc = builder.parse("src/main/java/xml/EducationSk.xml");
 
         NodeList educationList = doc.getElementsByTagName("PRAC_strMzdyVzdelanie");
         for (int i = 0; i < educationList.getLength(); i++) {
@@ -226,7 +226,7 @@ public class Parser {
     public void parseAgeSk(AgeManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse("src/xml/AgeSk.xml");
+        Document doc = builder.parse("src/main/java/xml/AgeSk.xml");
 
         NodeList educationList = doc.getElementsByTagName("PRAC_strMzdyVek");
         for (int i = 0; i < educationList.getLength(); i++) {
@@ -290,7 +290,7 @@ public class Parser {
 
     public static void main(String[] args) throws IOException, SQLException, ParserConfigurationException, SAXException, XPathExpressionException, ParseException {
         Properties pro = new Properties();
-        pro.load(new FileInputStream("src/configuration/jdbc.properties"));
+        pro.load(new FileInputStream("src/main/java/configuration/jdbc.properties"));
 
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl(pro.getProperty("url"));
