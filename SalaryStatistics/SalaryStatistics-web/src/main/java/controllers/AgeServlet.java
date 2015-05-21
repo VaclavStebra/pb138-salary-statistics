@@ -454,8 +454,8 @@ public class AgeServlet extends HttpServlet {
         if (age.getAgeFrom() == 0) {
             return "Do-" + age.getAgeTo().toString();
         }
-        if (age.getAgeTo() == 100) {
-            return age.getAgeFrom() + "-a vĂ­ce";
+        if (age.getAgeTo() == 99) {
+            return age.getAgeFrom() + "-a více";
         }
         return age.getAgeFrom().toString() + "-" + age.getAgeTo().toString();
     }
@@ -464,8 +464,8 @@ public class AgeServlet extends HttpServlet {
         String parts[] = interval.split("-", 2);
         if (parts[0].equals("Do")) {
             parts[0] = "0";
-        } else if (parts[1].equals("a vĂ­ce")) {
-            parts[1] = "100";
+        } else if (parts[1].equals("a více")) {
+            parts[1] = "99";
         }
         return parts;
     }

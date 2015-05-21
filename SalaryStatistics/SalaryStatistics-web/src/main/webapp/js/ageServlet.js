@@ -261,7 +261,7 @@ function makeInterval(entry) {
     var interval = "";
     if (entry.ageFrom == "0") {
         interval += "Do-" + entry.ageTo;
-    } else if (entry.ageTo == "100") {
+    } else if (entry.ageTo == "99") {
         interval += entry.ageFrom + "-a více";
     } else {
         interval += entry.ageFrom + "-" + entry.ageTo;
