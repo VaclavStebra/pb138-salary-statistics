@@ -130,7 +130,7 @@ var showEducationDataBySex = function (data) {
                     var entry = filteredData[index];
                     if (entry.sex === serie.name) {
                         filteredBySex.push(entry);
-                    } else if (entry.sex === undefined && serie.name === 'undefined') {                        
+                    } else if (entry.sex === undefined && serie.name === 'undefined') {
                         filteredBySex.push(entry);
                     }
                 }
@@ -141,9 +141,20 @@ var showEducationDataBySex = function (data) {
                     }
                     return a.degree > b.degree;
                 });
-                for (var index in filteredBySex) {
-                    var entry = filteredBySex[index];
-                    serie.data.push(entry.averageSalary);
+                for (var y in years) {
+                    var year = years[y];
+                    var found = false;
+                    for (var i in filteredBySex) {
+                        var entry = filteredBySex[i];
+                        if (entry.year === year) {
+                            serie.data.push(entry.averageSalary);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        serie.data.push(null);
+                    }
                 }
                 if (serie.name === 'undefined') {
                     serie.name = 'spolu';
@@ -158,7 +169,7 @@ var showEducationDataBySex = function (data) {
                     type: 'bar'
                 },
                 title: {
-                    text: 'Platy ' + degree + ' v ' + country 
+                    text: 'Platy ' + degree + ' v ' + country
                 },
                 xAxis: {
                     categories: years
@@ -222,9 +233,21 @@ var showEducationDataByYearAndSex = function (data) {
                     }
                     return a.degree > b.degree;
                 });
-                for (var index in filteredByDegree) {
-                    var entry = filteredByDegree[index];
-                    serie.data.push(entry.averageSalary);
+
+                for (var y in years) {
+                    var year = years[y];
+                    var found = false;
+                    for (var i in filteredByDegree) {
+                        var entry = filteredByDegree[i];
+                        if (entry.year === year) {
+                            serie.data.push(entry.averageSalary);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        serie.data.push(null);
+                    }
                 }
             }
 

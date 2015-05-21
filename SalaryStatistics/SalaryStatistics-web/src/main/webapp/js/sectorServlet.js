@@ -56,9 +56,20 @@ var showSectorDataByCountry = function (data) {
             filteredByCode.sort(function (a, b) {
                 return a.year - b.year;
             });
-            for (var index in filteredByCode) {
-                var entry = filteredByCode[index];
-                serie.data.push(entry.averageSalary);
+            for (var y in years) {
+                var year = years[y];
+                var found = false;
+                for (var index in filteredByCode) {
+                    var entry = filteredByCode[index];
+                    if (entry.year === year) {
+                        serie.data.push(entry.averageSalary);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    serie.data.push(null);
+                }
             }
             serie.name = getSectorName(data, serie.name);
         }
@@ -120,10 +131,22 @@ var showSectorDataInGraph = function (data) {
             };
 
             salariesByCountryAndCode.sort(compare);
-            for (var i in salariesByCountryAndCode) {
-                series[index].data.push(salariesByCountryAndCode[i].averageSalary);
+            
+            for (var y in years) {
+                var year = years[y];
+                var found = false;
+                for (var i in salariesByCountryAndCode) {
+                    var entry = salariesByCountryAndCode[i];
+                    if (entry.year === year) {
+                        series[index].data.push(entry.averageSalary);
+                        found = true;
+                        break;
+                    }
+                }                
+                if (!found) {
+                    series[index].data.push(null);
+                }
             }
-
         }
 
         var div = $('<div id="graph-data' + sector + '" style="width:100%; height:400px;"></div>');
