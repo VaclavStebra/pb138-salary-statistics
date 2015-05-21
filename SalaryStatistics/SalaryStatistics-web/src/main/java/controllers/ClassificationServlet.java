@@ -315,14 +315,26 @@ public class ClassificationServlet extends HttpServlet {
                 }
 
             });
-            for (Classification c : values) {
-                td = doc.createElement("td");
-                Double salary = c.getAverageSalary();                
-                if (c.getCountry().equals("sk")) {
-                    salary *= EUR_TO_CZK;
+            for (String year : years) {
+                for (String country : countries) {
+                    td = doc.createElement("td");
+                    boolean found = false;
+                    for (Classification c : values) {
+                        if (c.getYear().equals(year) && c.getCountry().equals(country)) {
+                            Double salary = c.getAverageSalary();                
+                            if (c.getCountry().equals("sk")) {
+                                salary *= EUR_TO_CZK;
+                            }
+                            td.setTextContent(String.valueOf(salary.intValue()));
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        td.setTextContent("-");
+                    }
+                    tr.appendChild(td);
                 }
-                td.setTextContent(String.valueOf(salary.intValue()));
-                tr.appendChild(td);
             }
             tbody.appendChild(tr);
         }

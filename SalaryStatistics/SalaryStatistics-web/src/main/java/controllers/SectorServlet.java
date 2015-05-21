@@ -315,14 +315,26 @@ public class SectorServlet extends HttpServlet {
                 }
 
             });
-            for (Sector s : values) {
-                td = doc.createElement("td");
-                Double salary = s.getAverageSalary();                
-                if (s.getCountry().equals("sk")) {
-                    salary *= EUR_TO_CZK;
+            for (String year : years) {
+                for (String country : countries) {
+                    td = doc.createElement("td");
+                    boolean found = false;
+                    for (Sector s : values) {
+                        if (s.getYear().equals(year) && s.getCountry().equals(country)) {
+                            Double salary = s.getAverageSalary();                
+                            if (s.getCountry().equals("sk")) {
+                                salary *= EUR_TO_CZK;
+                            }
+                            td.setTextContent(String.valueOf(salary.intValue()));
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        td.setTextContent("-");
+                    }
+                    tr.appendChild(td);
                 }
-                td.setTextContent(String.valueOf(salary.intValue()));
-                tr.appendChild(td);
             }
             tbody.appendChild(tr);
         }

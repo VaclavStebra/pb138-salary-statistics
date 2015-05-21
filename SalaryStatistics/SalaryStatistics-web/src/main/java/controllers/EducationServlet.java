@@ -330,14 +330,45 @@ public class EducationServlet extends HttpServlet {
                 }
 
             });
-            for (Education e : values) {
-                td = doc.createElement("td");
-                Double salary = e.getAverageSalary();
-                if (e.getCountry().equals("sk")) {
-                    salary *= EUR_TO_CZK;
+            for (String year : years) {
+                for (String country : countries) {
+                    for (String sex : sexes) {
+                        td = doc.createElement("td");
+                        boolean found = false;
+                        for (Education e : values) {
+                            if (e.getYear().equals(year) && e.getCountry().equals(country) && e.getSex().equals(sex)) {
+                                Double salary = e.getAverageSalary();                
+                                if (e.getCountry().equals("sk")) {
+                                    salary *= EUR_TO_CZK;
+                                }
+                                td.setTextContent(String.valueOf(salary.intValue()));
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            td.setTextContent("-");
+                        }
+                        tr.appendChild(td);
+                    }
+                    td = doc.createElement("td");
+                    boolean found = false;
+                    for (Education e : values) {
+                        if (e.getYear().equals(year) && e.getCountry().equals(country) && e.getSex()==null) {
+                            Double salary = e.getAverageSalary();                
+                            if (e.getCountry().equals("sk")) {
+                                salary *= EUR_TO_CZK;
+                            }
+                            td.setTextContent(String.valueOf(salary.intValue()));
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        td.setTextContent("-");
+                    }
+                    tr.appendChild(td);
                 }
-                td.setTextContent(String.valueOf(salary.intValue()));
-                tr.appendChild(td);
             }
             tbody.appendChild(tr);
         }
