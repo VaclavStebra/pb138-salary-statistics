@@ -48,7 +48,7 @@ public class Parser {
         
         Parser parser = new Parser();
         parser.parseSector(sectorManager);
-       // parser.parseClassification(classificationManager);
+        parser.parseClassification(classificationManager);
         parser.parseRegion(regionManager);
         
         ds.close();
@@ -133,18 +133,21 @@ public class Parser {
                     name = (Element) names.item(j);
                     if(value.getElementsByTagName("druhspec").item(0).getTextContent().equals(name.getAttribute("ID"))) {
                         if(name.getElementsByTagName("polozka").getLength() == 1) {
-                            classification = new Classification();
-                            classification.setCountry("cz");
-                            classification.setName(name.getElementsByTagName("textup").item(0).getTextContent());
-                            classification.setAverageSalary(Double.parseDouble(value.getElementsByTagName("nhodnota").item(0).getTextContent()));
-                            
-                            for (int k = 0; k < years.getLength(); k++) {
-                                year = (Element) years.item(k);
-                                if(value.getElementsByTagName("cas").item(0).getTextContent().equals(year.getAttribute("ID"))) {
-                                    classification.setYear(year.getElementsByTagName("rok").item(0).getTextContent());
+                            if("Klasifikace zaměstnání".equals(name.getElementsByTagName("textup").item(0).getTextContent())) {
+                                classification = new Classification();
+                                classification.setCountry("cz");
+                                classification.setName(name.getElementsByTagName("text").item(0).getTextContent());
+                                classification.setCode(name.getElementsByTagName("kodzaz").item(0).getTextContent());
+                                classification.setAverageSalary(Double.parseDouble(value.getElementsByTagName("nhodnota").item(0).getTextContent()));
+
+                                for (int k = 0; k < years.getLength(); k++) {
+                                    year = (Element) years.item(k);
+                                    if(value.getElementsByTagName("cas").item(0).getTextContent().equals(year.getAttribute("ID"))) {
+                                        classification.setYear(year.getElementsByTagName("rok").item(0).getTextContent());
+                                    }
                                 }
+                                manager.createClassification(classification);
                             }
-                            manager.createClassification(classification);
                         }
                     }
                 }
