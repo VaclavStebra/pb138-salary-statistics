@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+    TODO define vocabulary identification
+    PUBLIC ID: -//vendor//vocabulary//EN
+    SYSTEM ID: http://server/path/Classification2Sk.dtd
+
+-->
+
+<!--
+    An example how to use this DTD from your XML document:
+
+    <?xml version="1.0"?>
+
+    <!DOCTYPE data SYSTEM "Classification2Sk.dtd">
+
+    <data>
+    ...
+    </data>
+-->
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT data (nadpis|PRAC_strMzdyZam)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT nadpis (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT PRAC_strMzdyZam (R2000|UKAZ2|R2007|R2011|UKAZ1|MJ|R1998|R1999|R2001|R2006|R2010|R2002|R2003|R2004|R2005|R2008|R2009)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT UKAZ2 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT UKAZ1 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT MJ (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R1998 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R1999 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2000 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2001 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2002 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2003 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2004 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2005 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2006 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2007 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2008 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2009 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2010 (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT R2011 (#PCDATA)>

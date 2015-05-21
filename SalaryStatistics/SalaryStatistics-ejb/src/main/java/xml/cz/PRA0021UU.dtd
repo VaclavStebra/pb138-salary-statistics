@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+    TODO define vocabulary identification
+    PUBLIC ID: -//vendor//vocabulary//EN
+    SYSTEM ID: http://server/path/PRA0021UU.dtd
+
+-->
+
+<!--
+    An example how to use this DTD from your XML document:
+
+    <?xml version="1.0"?>
+
+    <!DOCTYPE ns2:vdbout SYSTEM "PRA0021UU.dtd">
+
+    <ns2:vdbout>
+    ...
+    </ns2:vdbout>
+-->
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT ns2:vdbout (zdroj|copyright|disclaimer|pruvodka|metadata|maketazdroj)*>
+<!ATTLIST ns2:vdbout
+    xmlns:ns2 CDATA #IMPLIED
+    xsi:schemaLocation CDATA #IMPLIED
+    xmlns:xsi CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT zdroj (#PCDATA|zdrojudaje)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT copyright (#PCDATA)>
+<!ATTLIST copyright
+    ROK CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT disclaimer (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT pruvodka (identdat|nazev|datvyber|kontakt|jazyk|rezimexportu|paramvsechny|maketazdroj)*>
+<!ATTLIST pruvodka
+    VERZE CDATA #IMPLIED
+    GENEROVANO CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT identdat (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT nazev (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT datvyber (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT kontakt (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT jazyk (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT rezimexportu (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT paramvsechny (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT maketazdroj (#PCDATA|dataset)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT metadata (typydat|ukazatele|charhodnot|merjednotky|dimdruhspec|dimuzemi|dimcas|typyudaju|duvernosti|presnosti|zdrojeudaju)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT typydat (typdat)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT typdat (#PCDATA|text)*>
+<!ATTLIST typdat
+    KOD CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT text (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT ukazatele (ukazatel)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT ukazatel (#PCDATA|text|definice)*>
+<!ATTLIST ukazatel
+    KOD CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT definice (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT charhodnot (charhod)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT charhod (#PCDATA|text)*>
+<!ATTLIST charhod
+    KOD CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT merjednotky (mj)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT mj (#PCDATA|text|kodcis|kodzaz)*>
+<!ATTLIST mj
+    ID CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT kodcis (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT kodzaz (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT dimdruhspec (druhspec)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT druhspec (#PCDATA|polozka)*>
+<!ATTLIST druhspec
+    ID CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT polozka (kodup|textup|kodcis|kodzaz|text|casobd|textobd|rok)*>
+<!ATTLIST polozka
+    PORADI CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT kodup (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT textup (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT dimuzemi (uzemi)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT uzemi (#PCDATA|polozka)*>
+<!ATTLIST uzemi
+    ID CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT dimcas (cas)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT cas (#PCDATA|polozka)*>
+<!ATTLIST cas
+    ID CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT casobd (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT textobd (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT rok (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT typyudaju (typzvu)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT typzvu (#PCDATA|text)*>
+<!ATTLIST typzvu
+    KOD CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT duvernosti (duver1)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT duver1 (#PCDATA|text)*>
+<!ATTLIST duver1
+    KOD CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT presnosti (presnost)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT presnost (#PCDATA|text)*>
+<!ATTLIST presnost
+    KOD CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT zdrojeudaju (zdrojudaje)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT zdrojudaje (#PCDATA|text)*>
+<!ATTLIST zdrojudaje
+    KOD CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT dataset (cislotab|nazev|data)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT cislotab (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT data (uzivparam|hodnota|statistika)*>
+<!ATTLIST data
+    STRANKA CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT uzivparam (uzivcas)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT uzivcas (nazevobd|casobd|cashod)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT nazevobd (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT cashod (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT hodnota (nhodnota|typdat|vymezeni|zverejneni|zdroj|poznamka)*>
+<!ATTLIST hodnota
+    SLOUPEC CDATA #IMPLIED
+    RADEK CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT nhodnota (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT vymezeni (ukazatel|charhod|mj|druhspec|uzemi|cas|typzvu|duver1|presnost)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT zverejneni (zverejod|zverejdo|aktual)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT zverejod (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT zverejdo (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT aktual (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT poznamka (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT statistika (pcdatradek|pcdatsloupcu)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT pcdatradek (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT pcdatsloupcu (#PCDATA)>
