@@ -134,19 +134,21 @@ public class Parser {
                     if(value.getElementsByTagName("druhspec").item(0).getTextContent().equals(name.getAttribute("ID"))) {
                         if(name.getElementsByTagName("polozka").getLength() == 1) {
                             if("Klasifikace zaměstnání".equals(name.getElementsByTagName("textup").item(0).getTextContent())) {
-                                classification = new Classification();
-                                classification.setCountry("cz");
-                                classification.setName(name.getElementsByTagName("text").item(0).getTextContent());
-                                classification.setCode(name.getElementsByTagName("kodzaz").item(0).getTextContent());
-                                classification.setAverageSalary(Double.parseDouble(value.getElementsByTagName("nhodnota").item(0).getTextContent()));
+                                if(!("9999".equals(name.getElementsByTagName("kodzaz").item(0).getTextContent()))) {
+                                    classification = new Classification();
+                                    classification.setCountry("cz");
+                                    classification.setName(name.getElementsByTagName("text").item(0).getTextContent());
+                                    classification.setCode(name.getElementsByTagName("kodzaz").item(0).getTextContent());
+                                    classification.setAverageSalary(Double.parseDouble(value.getElementsByTagName("nhodnota").item(0).getTextContent()));
 
-                                for (int k = 0; k < years.getLength(); k++) {
-                                    year = (Element) years.item(k);
-                                    if(value.getElementsByTagName("cas").item(0).getTextContent().equals(year.getAttribute("ID"))) {
-                                        classification.setYear(year.getElementsByTagName("rok").item(0).getTextContent());
+                                    for (int k = 0; k < years.getLength(); k++) {
+                                        year = (Element) years.item(k);
+                                        if(value.getElementsByTagName("cas").item(0).getTextContent().equals(year.getAttribute("ID"))) {
+                                            classification.setYear(year.getElementsByTagName("rok").item(0).getTextContent());
+                                        }
                                     }
+                                    manager.createClassification(classification);
                                 }
-                                manager.createClassification(classification);
                             }
                         }
                     }
