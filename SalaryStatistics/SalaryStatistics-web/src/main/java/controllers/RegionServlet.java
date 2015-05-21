@@ -257,7 +257,9 @@ public class RegionServlet extends HttpServlet {
         for (Region region : data) {
             years.add(region.getYear());
             countries.add(region.getCountry());
-            sexes.add(region.getSex());
+            if (region.getSex() != null) {
+                sexes.add(region.getSex());
+            }
         }
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();

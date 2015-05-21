@@ -275,7 +275,9 @@ public class AgeServlet extends HttpServlet {
         for (Age age : data) {
             years.add(age.getYear());
             countries.add(age.getCountry());
-            sexes.add(age.getSex());
+            if (age.getSex() != null) {
+                sexes.add(age.getSex());
+            }
         }
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
