@@ -67,8 +67,8 @@ public class RegionServlet extends HttpServlet {
         switch (action) {
             case "/": {
                 try {
-                    Document options = getOptions(manager, request, request.getQueryString() == null);
-                    Document tableData = getData(manager, request, request.getQueryString() != null);
+                    Document options = getOptions(manager, request, /*request.getQueryString() == null*/ request.getParameterValues("start") == null);
+                    Document tableData = getData(manager, request, /*request.getQueryString() != null*/ request.getParameterValues("start") != null);
                     request.setAttribute("heading", "Region");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
@@ -94,13 +94,27 @@ public class RegionServlet extends HttpServlet {
         List<Region> regions = manager.findAllRegions();
         if (filter) {
             String[] years = request.getParameterValues("year");
-            String[] degrees = request.getParameterValues("degree");
+            String[] names = request.getParameterValues("name");
             String[] countries = request.getParameterValues("country");
+            if (years == null || names == null || countries == null) {
+                return returnMessage();
+            }
             regions = filterByYear(regions, years);
-            regions = filterByName(regions, degrees);
+            regions = filterByName(regions, names);
             regions = filterByCountry(regions, countries);
         }
         return returnTableData(regions);
+    }
+
+    private Document returnMessage() throws ParserConfigurationException {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element message = doc.createElement("h4");
+        message.setAttribute("class", "bg-danger message");
+        message.setTextContent("Je potreba zaskrtnout alespon jednu hodnotu pro kazdej vyber.");
+        doc.appendChild(message);
+        return doc;
     }
     
     private Document getOptions(RegionManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
@@ -163,7 +177,7 @@ public class RegionServlet extends HttpServlet {
         div.appendChild(p);
         div.appendChild(doc.createElement("br"));
 
-        String[] degreesParametersValues = request.getParameterValues("degree");
+        String[] nameParametersValues = request.getParameterValues("name");
         p = doc.createElement("p");
         p.setTextContent("Regiony:");
         div.appendChild(p);
@@ -172,10 +186,10 @@ public class RegionServlet extends HttpServlet {
             label.setAttribute("class", "checkbox-inline");
             Element input = doc.createElement("input");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("name", "degree");
-            if (degreesParametersValues != null) {
-                for (String parameterDegree : degreesParametersValues) {
-                    if (parameterDegree.equals(name)) {
+            input.setAttribute("name", "name");
+            if (nameParametersValues != null) {
+                for (String parameterName : nameParametersValues) {
+                    if (parameterName.equals(name)) {
                         input.setAttribute("checked", "");
                     }
                 }
@@ -190,12 +204,12 @@ public class RegionServlet extends HttpServlet {
 
         p = doc.createElement("p");
         btn = doc.createElement("button");
-        btn.setAttribute("data-show-nothing-options", "degree");
+        btn.setAttribute("data-show-nothing-options", "name");
         btn.setAttribute("class", "btn btn-xs btn-warning");
         btn.setTextContent("Zrusit vse");
         p.appendChild(btn);
         btn = doc.createElement("button");
-        btn.setAttribute("data-show-all-options", "degree");
+        btn.setAttribute("data-show-all-options", "name");
         btn.setAttribute("class", "btn btn-xs btn-success");
         btn.setTextContent("Vybrat vse");
         p.appendChild(btn);
@@ -245,6 +259,12 @@ public class RegionServlet extends HttpServlet {
         submit.setAttribute("class", "btn btn-primary");
         submit.setAttribute("value", "Zobrazit");
         rootElement.appendChild(submit);
+        
+        Element hiddenStart = doc.createElement("input");
+        hiddenStart.setAttribute("type", "hidden");
+        hiddenStart.setAttribute("name", "start");
+        hiddenStart.setAttribute("value", "false");
+        rootElement.appendChild(hiddenStart);
 
         doc.appendChild(rootElement);
         return doc;
@@ -405,7 +425,7 @@ public class RegionServlet extends HttpServlet {
         boolean filter = true;
         if (filter) {
             String[] years = request.getParameterValues("year");
-            String[] names = request.getParameterValues("degree");
+            String[] names = request.getParameterValues("name");
             String[] countries = request.getParameterValues("country");
             data = filterByYear(data, years);
             data = filterByName(data, names);

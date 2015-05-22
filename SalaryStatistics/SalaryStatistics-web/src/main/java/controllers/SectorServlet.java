@@ -60,8 +60,8 @@ public class SectorServlet extends HttpServlet {
         switch (action) {
             case "/": {
                 try {
-                    Document options = getOptions(manager, request, request.getQueryString() == null);
-                    Document tableData = getData(manager, request, request.getQueryString() != null);
+                    Document options = getOptions(manager, request, /*request.getQueryString() == null*/ request.getParameterValues("start") == null);
+                    Document tableData = getData(manager, request, /*request.getQueryString() != null*/ request.getParameterValues("start") != null);
                     request.setAttribute("heading", "Sektor");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
@@ -89,11 +89,25 @@ public class SectorServlet extends HttpServlet {
             String[] years = request.getParameterValues("year");
             String[] code = request.getParameterValues("code");
             String[] countries = request.getParameterValues("country");
+            if (years == null || code == null || countries == null) {
+                return returnMessage();
+            }
             sectors = filterByYear(sectors, years);
             sectors = filterByCode(sectors, code);
             sectors = filterByCountry(sectors, countries);
         }
         return returnTableData(sectors);
+    }
+
+    private Document returnMessage() throws ParserConfigurationException {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element message = doc.createElement("h4");
+        message.setAttribute("class", "bg-danger message");
+        message.setTextContent("Je potreba zaskrtnout alespon jednu hodnotu pro kazdej vyber.");
+        doc.appendChild(message);
+        return doc;
     }
 
     private Document getOptions(SectorManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
@@ -244,6 +258,12 @@ public class SectorServlet extends HttpServlet {
         submit.setAttribute("class", "btn btn-primary");
         submit.setAttribute("value", "Zobrazit");
         rootElement.appendChild(submit);
+        
+        Element hiddenStart = doc.createElement("input");
+        hiddenStart.setAttribute("type", "hidden");
+        hiddenStart.setAttribute("name", "start");
+        hiddenStart.setAttribute("value", "false");
+        rootElement.appendChild(hiddenStart);
 
         doc.appendChild(rootElement);
         return doc;

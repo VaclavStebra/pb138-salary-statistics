@@ -65,7 +65,6 @@ public class AgeServlet extends HttpServlet {
                 return 1;
             }
             return parts1[0].compareTo(parts2[0]);
-            //return 1;
         }
     };
 
@@ -84,8 +83,9 @@ public class AgeServlet extends HttpServlet {
         switch (action) {
             case "/": {
                 try {
-                    Document options = getOptions(manager, request, request.getQueryString() == null);
-                    Document tableData = getData(manager, request, request.getQueryString() != null);
+                    Document options = getOptions(manager, request, request.getParameterValues("start") == null);
+                    //Document tableData = getData(manager, request, request.getQueryString() != null);
+                    Document tableData = getData(manager, request, request.getParameterValues("start") != null);
                     request.setAttribute("heading", "Vek");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
@@ -277,6 +277,12 @@ public class AgeServlet extends HttpServlet {
         submit.setAttribute("class", "btn btn-primary");
         submit.setAttribute("value", "Zobrazit");
         rootElement.appendChild(submit);
+        
+        Element hiddenStart = doc.createElement("input");
+        hiddenStart.setAttribute("type", "hidden");
+        hiddenStart.setAttribute("name", "start");
+        hiddenStart.setAttribute("value", "false");
+        rootElement.appendChild(hiddenStart);
 
         doc.appendChild(rootElement);
         return doc;

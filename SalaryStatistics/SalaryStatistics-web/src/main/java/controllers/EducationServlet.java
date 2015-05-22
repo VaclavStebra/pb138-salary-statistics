@@ -59,8 +59,8 @@ public class EducationServlet extends HttpServlet {
         switch (action) {
             case "/": {
                 try {
-                    Document options = getOptions(manager, request, request.getQueryString() == null);
-                    Document tableData = getData(manager, request, request.getQueryString() != null);
+                    Document options = getOptions(manager, request, /*request.getQueryString() == null*/ request.getParameterValues("start") == null);
+                    Document tableData = getData(manager, request, /*request.getQueryString() != null*/ request.getParameterValues("start") != null);
                     request.setAttribute("heading", "Vzdelani");
                     request.setAttribute("options", documentToString(options));
                     request.setAttribute("table", documentToString(tableData));
@@ -88,11 +88,25 @@ public class EducationServlet extends HttpServlet {
             String[] years = request.getParameterValues("year");
             String[] degrees = request.getParameterValues("degree");
             String[] countries = request.getParameterValues("country");
+            if (years == null || degrees == null || countries == null) {
+                return returnMessage();
+            }
             educations = filterByYear(educations, years);
             educations = filterByDegree(educations, degrees);
             educations = filterByCountry(educations, countries);
         }
         return returnTableData(educations);
+    }
+
+    private Document returnMessage() throws ParserConfigurationException {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element message = doc.createElement("h4");
+        message.setAttribute("class", "bg-danger message");
+        message.setTextContent("Je potreba zaskrtnout alespon jednu hodnotu pro kazdej vyber.");
+        doc.appendChild(message);
+        return doc;
     }
 
     private Document getOptions(EducationManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
@@ -236,6 +250,12 @@ public class EducationServlet extends HttpServlet {
         submit.setAttribute("class", "btn btn-primary");
         submit.setAttribute("value", "Zobrazit");
         rootElement.appendChild(submit);
+        
+        Element hiddenStart = doc.createElement("input");
+        hiddenStart.setAttribute("type", "hidden");
+        hiddenStart.setAttribute("name", "start");
+        hiddenStart.setAttribute("value", "false");
+        rootElement.appendChild(hiddenStart);
 
         doc.appendChild(rootElement);
         return doc;
