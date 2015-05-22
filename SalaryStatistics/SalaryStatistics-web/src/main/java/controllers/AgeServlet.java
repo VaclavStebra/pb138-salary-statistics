@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dao.Age;
 import dao.AgeManager;
 import dao.AgeManagerImpl;
+import helpers.CurrencyReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -48,7 +49,7 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/age/*"})
 public class AgeServlet extends HttpServlet {
 
-    private static final int EUR_TO_CZK = 25;
+    private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
 
     Comparator intervalComparator = new Comparator<String>() {
         @Override
