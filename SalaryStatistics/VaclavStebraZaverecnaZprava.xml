@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../docbook-xml-4.5/docbookx.dtd">
+
+<book lang="cz">
+  
+  <bookinfo>
+    <title>Závěrečná zpráva k projektu z PB138 - Statistika platů</title>
+    <author>
+      <firstname>Václav</firstname>
+      <surname>Štěbra</surname>
+    </author>
+  </bookinfo>
+  
+    <preface>
+        <title>Úvod</title>
+        <para>
+			Stěžejním zaměřením mojí práce na projektu byl návrh způsobu prezentace získaných dat a návrh controllerů aplikace.
+			Pro způsob zobrazení jsem s ohledem na výslednou přehlednost a možnost porovnávání navrhl zobrazovat data 
+			jak v tabulce tak hlavně v grafech.			
+        </para>
+    </preface>
+    <chapter>
+        <title>View vrstva aplikace</title>
+        <para>
+			View vrstva aplikace je vypracovaná s pomocí jazyků HTML5, CSS a Javascript použitého na zpracování dat pro zobrazení v grafu.
+			Dále se pro jednodušší práci s CSS styly používá velmi známý framework Bootstrap.
+        </para>
+        <para>
+            Veškerý design stránky je navrhnutý v souboru template.jsp, do kterého se dynamicky v controlleru pomocí Java DOM API vkládá tabulkové zobrazení a s pomocí AJAXového volání pak data do grafu. 
+        </para>
+        <para>
+            Pro práci s grafy se využívá Javascriptová knihovna Highcharts, která velmi usnadňuje vykreslování grafů. 
+			V aplikaci zobrazuji dva typy grafů - jeden typ na zobrazení růstu platů dle různých kritérií a poté sloupcový graf na porovnávání platů v České republice a na Slovensku, případně na porovnání platů dle pohlaví.
+        </para>
+    </chapter>
+    <chapter>
+        <title>Controllery</title>
+        <para>
+			O zobrazování dat filtrovaných podle sektorů se stará <nazev_kategorie>Servlet.java v balíku java.controllers. Tyto servlety pomocí dostupných manažerů získají data z databáze a poté je dle vybraných filtrů vyfiltrují. Dále pokud jde HTTP požadavek na adresu <web_root>/<nazev_kategorie>/data pak tyto data pomocí Java DOM API transformují na HTML fragment, který se vkládá do souboru template.jsp. Pokud jde na controller dotaz na adresu <web_root>/<nazev_kategorie>/data pak vyfiltrovaná data vrací klientovy ve formátu JSON. Klient pak dále tyto data zpracovává v jazyce Javascript do použitelné podoby pro zobrazení v grafu.
+        </para>
+    </chapter>
+    <chapter>
+        <title>Konverze Eura na CZK</title>
+        <para>Dále bylo mým úkolem vzhledem k rozdílným měnám používaným v České republice a na Slovensku zajistit převod na společnou měnu pro přehlednější porovnávání.
+        </para>
+		<para>
+			Tento převod je zajištěn pomocí kurzu dostupného na stránce České Národní Banky. Pokud daná stránka není dostupná je pro zachování funkčnosti stránky zvolen pevný kurz 27 korun = 1 euro.
+		</para>
+    </chapter>
+	<chapter>
+		<title>Zhodnocení</title>
+		<para>
+		Jako největší přínos tohoto projektu hodnotím možnost týmové spolupráce a seznámení se s nástroji podporujícími týmovovou spolupráci. Bylo velmi poučné probírat návrh aplikace s ostatnímy členy týmu a procházet jejich kód/mít vlastní kód okomentovaný další osobou.
+		</para>
+	</chapter>
+</book>
