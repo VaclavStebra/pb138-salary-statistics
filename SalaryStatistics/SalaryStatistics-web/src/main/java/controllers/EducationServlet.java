@@ -43,8 +43,18 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/education/*"})
 public class EducationServlet extends HttpServlet {
 
+    /**
+     * Exchange rate from EUR to CZK
+     */
     private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
 
+    /**
+     * Proccesses HTTP GET request
+     * @param request http request
+     * @param response http response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -83,6 +93,15 @@ public class EducationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Processes data and returns them as HTML portion of document
+     * @param manager manager used to retrieve data
+     * @param request http request
+     * @param filter whether to filter data
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document getData(EducationManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
         List<Education> educations = manager.findAllEducations();
         if (filter) {
@@ -99,6 +118,11 @@ public class EducationServlet extends HttpServlet {
         return returnTableData(educations);
     }
 
+     /**
+     * Appends error message when no filter is checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document returnMessage() throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -110,6 +134,14 @@ public class EducationServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML portion of document with generated options to filter by
+     * @param manager manager used to retrieve data
+     * @param request HTTP request
+     * @param checkAll whether all options should be checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document getOptions(EducationManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -262,6 +294,13 @@ public class EducationServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML table from data
+     * @param data data to show in table
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document returnTableData(List<Education> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
         SortedSet<String> countries = new TreeSet<>();
@@ -400,6 +439,15 @@ public class EducationServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Transforms XML document to string
+     * @param doc document to transform
+     * @return string representing xml document
+     * @throws TransformerException
+     * @throws TransformerFactoryConfigurationError
+     * @throws TransformerConfigurationException
+     * @throws IllegalArgumentException 
+     */
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -410,6 +458,13 @@ public class EducationServlet extends HttpServlet {
         return dataToWrite;
     }
 
+    /**
+     * Returns JSON representation of data
+     * @param manager manager used to retrieve data
+     * @param request HTTP request
+     * @return JSON representation of data
+     * @throws IOException 
+     */
     private String getJsonData(EducationManager manager, HttpServletRequest request) throws IOException {
         List<Education> data = manager.findAllEducations();
         //String filterStr = request.getParameter("filter");
@@ -431,6 +486,12 @@ public class EducationServlet extends HttpServlet {
         return new Gson().toJson(data);
     }
 
+    /**
+     * Filters data by year
+     * @param educations list of educations to filter
+     * @param years array of years to filter by
+     * @return filtered list of educations
+     */
     private List<Education> filterByYear(List<Education> educations, String[] years) {
         List<Education> filtered = new ArrayList<>();
         if (years != null) {
@@ -447,6 +508,12 @@ public class EducationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Filters data by code
+     * @param educations list of educations to filter
+     * @param degrees array of degrees to filter by
+     * @return filtered list of educations
+     */
     private List<Education> filterByDegree(List<Education> educations, String[] degrees) {
         List<Education> filtered = new ArrayList<>();
         if (degrees != null) {
@@ -463,6 +530,12 @@ public class EducationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Filters data by country
+     * @param educations list of educations to filter
+     * @param countries array of countries to filter by
+     * @return filtered list of educations
+     */
     private List<Education> filterByCountry(List<Education> educations, String[] countries) {
         List<Education> filtered = new ArrayList<>();
         if (countries != null) {

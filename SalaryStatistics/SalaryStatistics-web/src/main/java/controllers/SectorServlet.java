@@ -44,8 +44,18 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"", "/sector/*"})
 public class SectorServlet extends HttpServlet {
         
+    /**
+     * Exchange rate from EUR to CZK
+     */
     private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
 
+    /**
+     * Proccesses HTTP GET request
+     * @param request http request
+     * @param response http response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -84,6 +94,15 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Processes data and returns them as HTML portion of document
+     * @param manager sector manager used to retrieve data
+     * @param request http request
+     * @param filter whether to filter data
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document getData(SectorManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
         List<Sector> sectors = manager.findAllSectors();
         if (filter) {
@@ -100,6 +119,11 @@ public class SectorServlet extends HttpServlet {
         return returnTableData(sectors);
     }
 
+    /**
+     * Appends error message when no filter is checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document returnMessage() throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -111,6 +135,14 @@ public class SectorServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML portion of document with generated options to filter by
+     * @param manager sector manager used to retrieve data
+     * @param request HTTP request
+     * @param checkAll whether all options should be checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document getOptions(SectorManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -270,6 +302,13 @@ public class SectorServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML table from data
+     * @param data data to show in table
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document returnTableData(List<Sector> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
         TreeSet<String> countries = new TreeSet<>();
@@ -366,6 +405,15 @@ public class SectorServlet extends HttpServlet {
         return doc;
     }
     
+    /**
+     * Transforms XML document to string
+     * @param doc document to transform
+     * @return string representing xml document
+     * @throws TransformerException
+     * @throws TransformerFactoryConfigurationError
+     * @throws TransformerConfigurationException
+     * @throws IllegalArgumentException 
+     */
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -376,6 +424,13 @@ public class SectorServlet extends HttpServlet {
         return dataToWrite;
     }
 
+    /**
+     * Returns JSON representation of data
+     * @param manager manager used to retrieve data
+     * @param request HTTP request
+     * @return JSON representation of data
+     * @throws IOException 
+     */
     private String getJsonData(SectorManager manager, HttpServletRequest request) throws IOException {
         List<Sector> data = manager.findAllSectors();
         //String filterStr = request.getParameter("filter");
@@ -397,6 +452,12 @@ public class SectorServlet extends HttpServlet {
         return new Gson().toJson(data);
     }
 
+    /**
+     * Filters data by year
+     * @param sectors list of sectors to filter
+     * @param years array of years to filter by
+     * @return filtered list of sectors
+     */
     private List<Sector> filterByYear(List<Sector> sectors, String[] years) {
         List<Sector> filtered = new ArrayList<>();
         if (years != null) {
@@ -413,6 +474,12 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Filters data by code
+     * @param sectors list of sectors to filter
+     * @param codes array of codes to filter by
+     * @return filtered list of sectors
+     */
     private List<Sector> filterByCode(List<Sector> sectors, String[] codes) {
         List<Sector> filtered = new ArrayList<>();
         if (codes != null) {
@@ -429,6 +496,12 @@ public class SectorServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Filters data by country
+     * @param sectors list of sectors to filter
+     * @param countries array of countries to filter by
+     * @return filtered list of sectors
+     */
     private List<Sector> filterByCountry(List<Sector> sectors, String[] countries) {
         List<Sector> filtered = new ArrayList<>();
         if (countries != null) {

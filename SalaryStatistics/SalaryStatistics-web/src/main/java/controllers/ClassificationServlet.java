@@ -44,8 +44,18 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/classification/*"})
 public class ClassificationServlet extends HttpServlet {
         
+    /**
+     * Exchange rate from EUR to CZK
+     */
     private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
 
+    /**
+     * Proccesses HTTP GET request
+     * @param request http request
+     * @param response http response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -84,6 +94,15 @@ public class ClassificationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Processes data and returns them as HTML portion of document
+     * @param manager manager used to retrieve data
+     * @param request http request
+     * @param filter whether to filter data
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document getData(ClassificationManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
         List<Classification> classifications = manager.findAllClassifications();
         if (filter) {
@@ -100,6 +119,11 @@ public class ClassificationServlet extends HttpServlet {
         return returnTableData(classifications);
     }
 
+    /**
+     * Appends error message when no filter is checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document returnMessage() throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -111,6 +135,14 @@ public class ClassificationServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML portion of document with generated options to filter by
+     * @param manager manager used to retrieve data
+     * @param request HTTP request
+     * @param checkAll whether all options should be checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document getOptions(ClassificationManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -270,6 +302,13 @@ public class ClassificationServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML table from data
+     * @param data data to show in table
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document returnTableData(List<Classification> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
         TreeSet<String> countries = new TreeSet<>();
@@ -366,6 +405,15 @@ public class ClassificationServlet extends HttpServlet {
         return doc;
     }
     
+    /**
+     * Transforms XML document to string
+     * @param doc document to transform
+     * @return string representing xml document
+     * @throws TransformerException
+     * @throws TransformerFactoryConfigurationError
+     * @throws TransformerConfigurationException
+     * @throws IllegalArgumentException 
+     */
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -376,6 +424,13 @@ public class ClassificationServlet extends HttpServlet {
         return dataToWrite;
     }
 
+    /**
+     * Returns JSON representation of data
+     * @param manager manager used to retrieve data
+     * @param request HTTP request
+     * @return JSON representation of data
+     * @throws IOException 
+     */
     private String getJsonData(ClassificationManager manager, HttpServletRequest request) throws IOException {
         List<Classification> data = manager.findAllClassifications();
         //String filterStr = request.getParameter("filter");
@@ -397,6 +452,12 @@ public class ClassificationServlet extends HttpServlet {
         return new Gson().toJson(data);
     }
 
+    /**
+     * Filters data by year
+     * @param classifications list of classifications to filter
+     * @param years array of years to filter by
+     * @return filtered list of classifications
+     */
     private List<Classification> filterByYear(List<Classification> classifications, String[] years) {
         List<Classification> filtered = new ArrayList<>();
         if (years != null) {
@@ -413,6 +474,12 @@ public class ClassificationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Filters data by code
+     * @param classifications list of classifications to filter
+     * @param codes array of codes to filter by
+     * @return filtered list of classifications
+     */
     private List<Classification> filterByCode(List<Classification> classifications, String[] codes) {
         List<Classification> filtered = new ArrayList<>();
         if (codes != null) {
@@ -429,6 +496,12 @@ public class ClassificationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Filters data by country
+     * @param classifications list of classifications to filter
+     * @param countries array of countries to filter by
+     * @return filtered list of classifications
+     */
     private List<Classification> filterByCountry(List<Classification> classifications, String[] countries) {
         List<Classification> filtered = new ArrayList<>();
         if (countries != null) {
