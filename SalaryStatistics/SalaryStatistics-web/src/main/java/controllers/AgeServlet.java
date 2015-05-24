@@ -49,8 +49,14 @@ import org.w3c.dom.Element;
 @WebServlet(urlPatterns = {"/age/*"})
 public class AgeServlet extends HttpServlet {
 
+    /**
+     * Exchange rate from EUR to CZK
+     */
     private static final double EUR_TO_CZK = CurrencyReader.eurCourse();
 
+    /**
+     * Comparator for age intervals
+     */
     Comparator intervalComparator = new Comparator<String>() {
         @Override
         public int compare(String one, String two) {
@@ -69,6 +75,13 @@ public class AgeServlet extends HttpServlet {
         }
     };
 
+    /**
+     * Proccesses HTTP GET request
+     * @param request http request
+     * @param response http response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -107,6 +120,15 @@ public class AgeServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Processes data and returns them as HTML portion of document
+     * @param manager manager used to retrieve data
+     * @param request http request
+     * @param filter whether to filter data
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document getData(AgeManager manager, HttpServletRequest request, boolean filter) throws IOException, ParserConfigurationException {
         List<Age> ages = manager.findAllAges();
         if (filter) {
@@ -123,6 +145,11 @@ public class AgeServlet extends HttpServlet {
         return returnTableData(ages);
     }
 
+    /**
+     * Appends error message when no filter is checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document returnMessage() throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -134,6 +161,14 @@ public class AgeServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML portion of document with generated options to filter by
+     * @param manager manager used to retrieve data
+     * @param request HTTP request
+     * @param checkAll whether all options should be checked
+     * @return HTML portion of document
+     * @throws ParserConfigurationException 
+     */
     private Document getOptions(AgeManager manager, HttpServletRequest request, boolean checkAll) throws ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -289,6 +324,13 @@ public class AgeServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Returns HTML table from data
+     * @param data data to show in table
+     * @return HTML portion of document
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     private Document returnTableData(List<Age> data) throws IOException, ParserConfigurationException {
         SortedSet<String> years = new TreeSet<>();
         SortedSet<String> countries = new TreeSet<>();
@@ -427,6 +469,15 @@ public class AgeServlet extends HttpServlet {
         return doc;
     }
 
+    /**
+     * Transforms XML document to string
+     * @param doc document to transform
+     * @return string representing xml document
+     * @throws TransformerException
+     * @throws TransformerFactoryConfigurationError
+     * @throws TransformerConfigurationException
+     * @throws IllegalArgumentException 
+     */
     private String documentToString(Document doc) throws TransformerException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -437,6 +488,13 @@ public class AgeServlet extends HttpServlet {
         return dataToWrite;
     }
 
+    /**
+     * Returns JSON representation of data
+     * @param manager manager used to retrieve data
+     * @param request HTTP request
+     * @return JSON representation of data
+     * @throws IOException 
+     */
     private String getJsonData(AgeManager manager, HttpServletRequest request) throws IOException {
         List<Age> data = manager.findAllAges();
         boolean filter = true;
@@ -456,6 +514,12 @@ public class AgeServlet extends HttpServlet {
         return new Gson().toJson(data);
     }
 
+    /**
+     * Filters data by year
+     * @param ages list of ages to filter
+     * @param years array of years to filter by
+     * @return filtered list of classifications
+     */
     private List<Age> filterByYear(List<Age> ages, String[] years) {
         List<Age> filtered = new ArrayList<>();
         if (years != null) {
@@ -472,6 +536,12 @@ public class AgeServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Filters data by code
+     * @param ages list of ages to filter
+     * @param intervals array of intervals to filter by
+     * @return filtered list of classifications
+     */
     private List<Age> filterByInterval(List<Age> ages, String[] intervals) {
         List<Age> filtered = new ArrayList<>();
         Set<String[]> intervalParts = new HashSet<>();
@@ -492,6 +562,12 @@ public class AgeServlet extends HttpServlet {
         return ages;
     }
 
+    /**
+     * Finds if entered string is a number
+     * @param str string detection 
+     * @return true if str is numeric
+     * @return false if str is not numeric
+     */
     public static boolean isNumeric(String str) {
         try {
             double d = Double.parseDouble(str);
@@ -501,6 +577,12 @@ public class AgeServlet extends HttpServlet {
         return true;
     }
 
+    /**
+     * Converts age's parameters ageFrom and ageTo into
+     * a one interval as string
+     * @param age object to specify interval
+     * @return interval in string form
+     */
     private String convertToInterval(Age age) {
         if (age.getAgeFrom() == 0) {
             return "Do-" + age.getAgeTo().toString();
@@ -521,6 +603,12 @@ public class AgeServlet extends HttpServlet {
         return parts;
     }
 
+    /**
+     * Filters data by country
+     * @param ages list of ages to filter
+     * @param countries array of countries to filter by
+     * @return filtered list of classifications
+     */
     private List<Age> filterByCountry(List<Age> ages, String[] countries) {
         List<Age> filtered = new ArrayList<>();
         if (countries != null) {
