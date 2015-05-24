@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../docbook-xml-4.5/docbookx.dtd">
+
+<book lang="sk">
+  <bookinfo>
+    <title>Závěrečná zpráva projektu Vývoj platov v ČR a inde – kontrolná a prezentačná vrstva</title>
+    <author>
+      <firstname>Vladimír</firstname>
+      <surname>Jarabica</surname>
+    </author>
+  </bookinfo>
+  
+    <preface>
+        <title>Úvod</title>
+        <para>
+            Zameraním mojej práce na projekte bolo vytvorenie časti kontrolnej a prezentačnej 
+            vrsty aplikácie Štatistika platov - webovej aplikácie na porovnávanie platov.
+            Pre vývoj aplikácie bola zvolená MVC architektúra. Vďaka nej je možné
+            pohodlne oddeliť vrstvu modelu - dát a vrstiev kontrolnej a prezentačnej
+            na úrovní vývoju ako aj rozdelení práce.
+        </para>
+    </preface>
+    <chapter>
+        <title>Prezentačná vrstva</title>
+        <para>Prezentačná vrstva je implementovaná jedným template súborom vo formáte JSP.
+            Každý kontroler je naviazaný na jeden typ hlavného rozdelenia dát v databáze.
+            Podľa veku, sektoru, regiónu, klasifikácie a vzdelania. Keďže sa každý typ
+            na prezentačnej vrstve zobrazuje podobne, bolo vhodné zvoliť jediný súbor ako šablónu.
+        </para>
+        <para>Stránka sa skladá z menu, kde sa vyberie jeden z hlavných typov rozdelenia.
+            Nato sa zobrazí rozšírená ponuka výberu, špecifická pre každý typ.
+            Nazačiatku sú vždy zobrazované všetky informácie. Najprv v tabuľke, zoradenej vždy
+            podľa hlavného kritéria a následne viacerými grafmi pre prehľadnosť.
+            Užívateľ môže výber zmeniť zaškrtávaním checkboxov v sekcii výberu.
+        </para>
+        <para>Na zobrazenie dizajnu stránky bol zvolený framework Bootstrap.
+            Je to jeden z najpoužívanejších moderných frameworkov pre tvorbu responzívnych
+            webov. Vybrali sme ho pre jeho jednoduchosť a ľahké použitie.
+            Na jeho základe sme vytvorili header, rolovacie menu, tlačidlá, či baner
+            varovnej správy.
+        </para>
+        <para>Pre zobrazenie grafov bola popužitá JavaScriptová knižnica HighCharts.
+            Táto knižnica ponúka množstvo typov grafov. V našom projekte sú použíté
+            čiarové a horizontálne stĺpcové grafy.
+            Highcharts je založená na HTML5, teda spĺňa najnovšie štandardy a pre
+            nekomerčné či študijné účely je voľne stiahnuteľná.
+        </para>
+    </chapter>
+
+    <chapter>
+        <title>Rozdelenie podľa regiónu</title>
+        <section>
+            <title>Región servlet</title>
+            <para>RegionServlet.java je kontroler, ktorý sa stará o vypísanie formulára nastavení.
+                Ten obsahuje roky, názvy regiónov a krajiny, pre ktoré existujú relevantné dáta
+                v databázi.
+            </para>
+            <para>Ďalej tento kontroler vytvára pomocou Java DOM API html tabuľku. Dáta z databazáze
+                sú filtrované na základe kritérií, ktoré si zvolil užívateľ pred zaslaním požiadavky.
+                Tabuľka je zobrazená pomocou JSP tagu.
+            </para>
+            <para>Nakoniec sú z tohto kontrolera posielané filtrované dáta vo formáte JSON, ktoré
+                sú na prezentačnej vrstve použité na vytvorenie grafov.
+            </para>
+        </section>
+        <section>
+            <title>Región javascript súbor</title>
+            <para>regionServlet.js je javascriptový súbor, ktorý spracúva dáta vo formáte JSON.
+                Pomocou knižnice HighCharts vytvára tri druhy grafov.
+            </para>
+            <para>Prvý druh sú stĺpcové grafy pre každý región v konkrétnej krajine,
+            zoradený podľa rokov, pre kategórie pohlaví.</para>
+            <para>Druhý druh sú čiarové grafy pre každú krajinu,
+                kde sa medzi sebou porovnávajú všety regióny.</para>
+            <para>Posledný druh zobrazuje stĺpcové grafy pre každý región,
+                kde sa porovnávajú krajiny medzi sebou.</para>
+        </section>
+    </chapter>
+
+    <chapter>
+        <title>Rozdelenie podľa veku</title>
+        <section>
+            <title>Vek servlet</title>
+            <para>AgeServlet.java je kontroler, ktorý sa stará o vypísanie formulára nastavení.
+                Ten obsahuje roky, intervaly veku a krajiny, pre ktoré existujú relevantné dáta
+                v databázi.
+            </para>
+            <para>Kontroler rovnako ako predošlý takisto vytvára tabuľku podľa dát v databáze
+                a tiež posiela filtrované dáta vo formáte JSON.
+            </para>
+            <para>Kontroler veku je podobný kontroleru Regiónu. Problém však bol pri filtrovaní
+                a zoraďovaní podľa intervalu. Regióny sa filtrujú podľa mena, no intervaly sa skladajú 
+                z dvoch hodnôt. Začiatočného konečného veku.
+            </para>
+        </section>
+        <section>
+            <title>Vek javascript súbor</title>
+            <para>vekServlet.js je javascriptový súbor, ktorý spracúva dáta vo formáte JSON.
+                Pomocou knižnice HighCharts vytvára tri druhy grafov.
+            </para>
+            <para>Prvý druh sú stĺpcové grafy pre každý vekový interval v konkrétnej krajine,
+            zoradený podľa rokov, pre kategórie pohlaví.</para>
+            <para>Druhý druh sú čiarové grafy pre každú krajinu,
+                kde sa medzi sebou porovnávajú všety vekové intervaly.</para>
+            <para>Posledný druh zobrazuje stĺpcové grafy pre každý vekový interval,
+                kde sa porovnávajú krajiny medzi sebou.</para>
+            <para>Rovnako ako aj na kontroler vrstve bolo treba špecificky riešiť problém
+                filtrácie a zoraďovania dát.</para>
+        </section>
+    </chapter>
+    <chapter>
+        <title>Ďalšie úlohy</title>
+        <para>Okrem dvoch servletov som vytvoril základný dizajn stránky. Ten sa skladá z headeru
+        a menu, ktoré sú prvotne založené na frameworku bootstrap.
+        </para>
+        <para>Napokon som vytvoril chybovú hlášku, keď užívateľa zadá neplatnú voľbu parametrov.
+            Samotné testovanie je v metóde servletov, ktorá pri neplatnej voľbe vráti chybovú hlášku.
+        </para>
+    </chapter>
+</book>
