@@ -26,10 +26,18 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * Main class to parse data from Czech Statistical Office
  * @author Filip
  */
 public class Parser {
+    /**
+     * Main class in which all data are parsed
+     * @param args arguments on main class - not supported
+     * @throws IOException
+     * @throws SQLException
+     * @throws SAXException
+     * @throws ParserConfigurationException 
+     */
     public static void main(String[] args) throws IOException, SQLException, SAXException, ParserConfigurationException {
         Properties pro = new Properties();
         pro.load(new FileInputStream("src/main/java/configuration/jdbc.properties"));
@@ -53,7 +61,13 @@ public class Parser {
         
         ds.close();
     }
-    
+    /**
+     * Parses data about sectors (CZ-NACE).
+     * @param manager manager of sector objects
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @throws IOException 
+     */
     public void parseSector(SectorManagerImpl manager) throws SAXException, ParserConfigurationException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -111,6 +125,13 @@ public class Parser {
         }               
     }
     
+    /**
+     * Parses data about classification (CZ-ISCO).
+     * @param manager manager of classification objects
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     public void parseClassification(ClassificationManagerImpl manager) throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -158,7 +179,13 @@ public class Parser {
             }
         }
     }
-    
+    /**
+     * Parses data about regions in Czech Republic.
+     * @param manager manager of regions objects
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException 
+     */
     public void parseRegion(RegionManagerImpl manager) throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
