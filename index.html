@@ -38,16 +38,16 @@ Dáta sú čerpané z verejne dostupných databáz štatistických úradov.</p>
 <h3>
 <a id="návrh-aplikácie" class="anchor" href="#n%C3%A1vrh-aplik%C3%A1cie" aria-hidden="true"><span class="octicon octicon-link"></span></a>Návrh aplikácie</h3>
 
-<p>Webový portál ponúka porovnanie štatistických údajov platov v období definovanom používateľom, ktoré sú rozdelené do piatich hlavných kategórií – platy podľa vekovej skupiny, dosiahnutého vzdelania, regiónu, prevažujúcej činnosti (SK NACE a CZ-NACE) a hlavných tried klasifikácie zamestnania (SK ISCO a CZ-ISCO). Tieto je možné ďalej filtrovať na základe krajiny a pohlavia.<br>
+<p>Webový portál ponúka porovnanie štatistických údajov platov v období definovanom používateľom, ktoré sú rozdelené do piatich hlavných kategórií – platy podľa vekovej skupiny, dosiahnutého vzdelania, regiónu, prevažujúcej činnosti (SK NACE a CZ-NACE) a hlavných tried klasifikácie zamestnania (SK ISCO a CZ-ISCO). Tieto je možné ďalej filtrovať na základe krajiny a obdobia.<br>
 Používateľ má možnosť takto vzniknuté skupiny porovnávať medzi sebou na základe ich zobrazenia v tabuľke alebo grafom. Je dostupných niekoľko typov grafov pre čo najväčšiu užívateľskú prívetivosť.</p>
 
 <h3>
 <a id="riešenie" class="anchor" href="#rie%C5%A1enie" aria-hidden="true"><span class="octicon octicon-link"></span></a>Riešenie</h3>
 
 <p>Aplikácia je postavená na návrhovom vzore MVC (model-view-controller).<br>
-Implementovaná je v programovacom jazyku Java, vo verzii JDK 8.<br>
+Implementovaná je v programovacom jazyku Java, vo verzii SE 8 a EE 7.<br>
 Na frontende je použitý framework Bootstrap, vizualizáciu dát za pomoci grafov zabezpečuje javascriptová knižnica Highcharts JS.<br>
-Dáta sú uložené v relačnej databáze Apache Derby.</p>
+Dáta sú uložené v relačnej databáze JavaDB (Apache Derby).</p>
 
 <h3>
 <a id="uml-diagramy" class="anchor" href="#uml-diagramy" aria-hidden="true"><span class="octicon octicon-link"></span></a>UML diagramy</h3>
@@ -55,8 +55,11 @@ Dáta sú uložené v relačnej databáze Apache Derby.</p>
 <img src="images/Model.png" alt="Project model layer"></p><br>
 <p>Bližší pohľad na <strong>controller</strong> vrstvu:<br>
 <img src="images/Controller.png" alt="Project controller layer"></p><br>
+<p>Bližší pohľad na <strong>parsery</strong>:<br>
+<img src="images/Parser.png" alt="Parsers"></p>
 <p>Prehľad riešenia: <br>
 <img src="images/Overview.png" alt="Project overview"></p>
+
 
 <h3>
 <a id="vývojári" class="anchor" href="#v%C3%BDvoj%C3%A1ri" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vývojári</h3>
