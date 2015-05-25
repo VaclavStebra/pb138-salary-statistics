@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../docbook-xml-4.5/docbookx.dtd">
+
+<book lang="sk">
+  
+    <bookinfo>
+        <title>Záverečná správa k projektu z PB138 - Vývoj platov v ČR a inde</title>
+        <author>
+            <firstname>Tomáš</firstname>
+            <surname>Milota</surname>
+        </author>
+    </bookinfo>
+  
+    <preface>
+        <title>Úvod</title>
+        <para>
+            Zameraním mojej práce na projekte bolo vytvorenie časti model 
+            vrsty aplikácie Vývoj platov v ČR a inde - webovej aplikácie na porovnávanie platov.
+            Cieľom projektu je vytvoriť webový portál, ktorý umožní získať prehľad o štatistických údajoch 
+            platov v Českej republike a na Slovensku, s dôrazom na jednoduchosť a užívateľskú prívetivosť.
+            Štatistiky je možné vzájomne porovnávať a filtrovať na základe rôznych kritérií – pohlavia, veku, 
+            vzdelania, odvetvia alebo regiónu. Dáta sú čerpané z verejne dostupných databáz štatistických úradov.		
+        </para>
+    </preface>
+    <chapter>
+        <title>Ziskavanie dát</title>
+        <para>
+            Aplikácia obsahuje parser, ktorý exportuje dáta z xml súborov, ktoré sú verejne dostupné na webovej stránke Slovenského
+            štatistického úradu a uloží ich do relačnej databázy. Jednotlivé xml súbory nemali rovnakú štruktúru, preto bolo nutné
+            pre každý súbor vytvorit samostatný parser. Získavanie dát zo súborov sa realizuje pomocou DOM stromovej štruktúry a javovkého balíku org.w3c.dom, 
+            ktorý obsahuje metody na prácu s týmto modelom. 
+        </para>
+        <para>
+            Rozhranie DOM (Document Object Model) je štandardné rozhranie pre prácu s dokumentami XML definované konsorciom W3C. Rozhranie definuje zposob, 
+            akým sa dokument XML mapuje na hierarchiu objektov v pameti. Každej časti dokumentu, ako je element, atribut, textový uzel a podobne, odpovedá v pameti jeden objekt. 
+        </para>
+    </chapter>
+    <chapter>
+        <title>Model vrstva aplikace</title>
+        <para>
+            Dáta sú uložené v relačnej databáze Apache Derby. 
+            Vo vstupných dátach sú platy rozdelené podla 5 kritérií: vek, vzdelanie, region, klasifikácia zamestnania(SK ISCO a CZ ISCO) a prevažujúcej činnosti(SK NACE a CZ NACE).
+            Na základe týchto kritérií sú tiež vytvorené jednotlivé tabulky:
+            - Age(id, ageFrom, ageTo, country, year, sex, averageSalary)
+            - Education(id, degree, country, year, sex, averageSalary)
+            - Region(id, name country, year, sex, averageSalary)
+            - Classification(id, code, name, country, year, averageSalary)
+            - Sector(id, code, name, country, year, averageSalary)
+            
+            SQL príkazy na vytvorenie a vymazanie tabuliek sú uložené v samostatných súboroch.
+        </para>
+        <para>
+            K databaze sa pristupuje pomocou aplikačného rozhrania JDBC(Java Database Connectivity), ktoré je štandardnou súčasťou Java SE.
+            Parametry pre pripojenie k databáze sú uložené v konfiguračnom súbore jdbc.properties.
+            Pre každú schému bola vytvorená trieda reprezentujúca jeden riadok v tabulke a dalej interface a implementácia managera, ktorý zabezpečuje
+            základné CRUD operácie a pridáva niektoré pomocné metody.
+        </para>
+    </chapter>
+</book>
