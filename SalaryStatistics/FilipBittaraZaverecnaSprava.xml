@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../docbook-xml-4.5/docbookx.dtd">
+
+<book lang="sk">
+  
+    <bookinfo>
+        <title>Záverečná správa z projektu PB138: Vývoj platov v ČR a inde</title>
+        <author>
+            <firstname>Filip</firstname>
+            <surname>Bittara</surname>
+        </author>
+    </bookinfo>
+  
+    <preface>
+        <title>Úvod</title>
+        <para>
+           Mojou hlavnou úlohou v priebehu práce na projekte Vývoj platov v ČR a inde bolo jeho vedenie, staranie sa o wiki stránky projektu na githube a taktiež jeho github pages. Praktická časť mojej práce zahŕňala implementáciu parseru na dáta Českého štatistického úradu.
+           Cieľom tohoto projektu bolo spracovať dáta o mzdách poskytované štatistickými úradmi na Slovensku a v Českej republike a vytvoriť webový portál, ktorý umožní tieto dáta zobraziť, filtrovať a vizualizovať za pomoci grafov.		
+       </para>
+    </preface>
+    <chapter>
+        <title>Vedenie projektu a dokumentácia</title>
+        <para>
+            V priebehu implementácie projektu som sa staral najmä o jeho vedenie a komunikáciu s vedúcim projektu. Vďaka dôkladne naplánovanému rozdeleniu práce a pravidelným mítingom sa nevyskytli žiadne výrazné problémy a projekt sme dokončili v naplánovanom čase. Táto pozícia z veľkej časti zahŕňala tiež pravidelnú revíziu kódu a drobné úpravy. Z môjho pohľadu ide o veľmi pozitívnu skúsenosť a pravdepodobne veľký prínos k môjmu budúcemu pracovnému životu.
+        </para>
+        <para>
+             Ďalšou podstatnou časťou mojej práce bolo vytváranie dokumentácie. To zahŕňa wiki stránky na Githube, github pages projektu a tvorbu záverečnej prezentácie.
+        </para>
+    </chapter>    
+
+    <chapter>
+        <title>Získavanie dát</title>
+        <para>
+            Pre export dát, dostupných  zo štatistík Českého štatistického úradu som implementoval parser XML súborov, ktorý na ich spracovanie využíva Java DOM API, dostupné z balíku org.w3c.dom..
+            Vzhľadom k nejednotným dokumentom bolo potrebné pre každý typ získavaných dát vytvoriť rôznu metódu, ktorá dokument s daným typom spracúva. Dáta dostupné z týchto štatistík zahŕňajú rozdelenie platov podľa regiónu, prevažujúcej činnosti (CZ-NACE) a hlavných tried klasifikácie zamestnania (CZ-ISCO). Z dát získaných týmto spôsobom sú ďalej vytvorené príslušné Java objekty, ktoré sa ukladajú do databázy JavaDB (Apache Derby) za pomoci manažérov implementovaných v model vrstve.
+        </para>
+        <para>
+            DOM (Document Object Model) je špecifikácia programového rozhrania W3C konzorcia, použitelná v mnohých prostrediach a aplikaciách. Definuje logickú štruktúru dokumentu a spôsob prístupu a manipulácie s dokumentom. Rozhraníe je definováné s použitím IDL (Interface Definition Language), pre jednotlivé programovacie jazyky existujú napojenia. V prípade Javy je to balík org.w3c.dom.
+        </para>
+    </chapter>
+</book>
