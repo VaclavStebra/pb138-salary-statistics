@@ -41,6 +41,12 @@ public class EducationManagerImpl implements EducationManager {
         }
     }
 
+    /**
+     * Stores new education into database. Id for the new education is automatically
+     * generated and stored into id attribute of education.
+     *
+     * @param education education to be created.
+     */
     @Override
     public void createEducation(Education education) {
         checkDataSource();
@@ -84,6 +90,11 @@ public class EducationManagerImpl implements EducationManager {
         }
     }
 
+    /**
+     * Deletes education from database.
+     *
+     * @param education education to be deleted from db.
+     */
     @Override
     public void deleteEducation(Education education) {
         checkDataSource();
@@ -118,6 +129,11 @@ public class EducationManagerImpl implements EducationManager {
         }
     }
 
+    /**
+     * Returns list of all rows in the database.
+     *
+     * @return list of all educations in database.
+     */
     @Override
     public List<Education> findAllEducations() {
         checkDataSource();
@@ -137,6 +153,12 @@ public class EducationManagerImpl implements EducationManager {
         }  
     }
 
+    /**
+     * Returns education with given id.
+     *
+     * @param id primary key of requested education.
+     * @return education with given id or null if such education does not exist.
+     */
     @Override
     public Education findEducationById(Long id) {
         if(cacheId.containsKey(id)){
@@ -170,6 +192,11 @@ public class EducationManagerImpl implements EducationManager {
         }
     }
 
+    /**
+     * Updates education in database.
+     *
+     * @param education updated education to be stored into database.
+     */
     @Override
     public void updateEducation(Education education) {
         checkDataSource();
@@ -210,6 +237,15 @@ public class EducationManagerImpl implements EducationManager {
         }      
     }
     
+    /**
+     * Returns education with given parameters.
+     *
+     * @param degree of requested education.
+     * @param country country of requested education.
+     * @param year year of requested age.
+     * @param sex sex of requested age.
+     * @return educations with given parameters or null if such education does not exist.
+     */
     @Override
     public List<Education> findEducationsByParameters(String degree, String country, String year, String sex){
         checkDataSource();

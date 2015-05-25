@@ -41,6 +41,12 @@ public class RegionManagerImpl implements RegionManager {
         }
     }
 
+    /**
+     * Stores new region into database. Id for the new region is automatically
+     * generated and stored into id attribute of region.
+     *
+     * @param region age to be created.
+     */
     @Override
     public void createRegion(Region region) {
         checkDataSource();
@@ -84,6 +90,11 @@ public class RegionManagerImpl implements RegionManager {
         }
     }
 
+     /**
+     * Deletes region from database.
+     *
+     * @param region age to be deleted from db.
+     */
     @Override
     public void deleteRegion(Region region) {
         checkDataSource();
@@ -118,6 +129,11 @@ public class RegionManagerImpl implements RegionManager {
         }
     }
 
+    /**
+     * Returns list of all rows in the database.
+     *
+     * @return list of all regions in database.
+     */
     @Override
     public List<Region> findAllRegions() {
         checkDataSource();
@@ -137,6 +153,12 @@ public class RegionManagerImpl implements RegionManager {
         }  
     }
 
+    /**
+     * Returns region with given id.
+     *
+     * @param id primary key of requested region.
+     * @return region with given id or null if such region does not exist.
+     */
     @Override
     public Region findRegionById(Long id) {
         if(cacheId.containsKey(id)){
@@ -170,6 +192,11 @@ public class RegionManagerImpl implements RegionManager {
         }
     }
 
+    /**
+     * Updates region in database.
+     *
+     * @param region updated region to be stored into database.
+     */
     @Override
     public void updateRegion(Region region) {
         checkDataSource();
@@ -210,6 +237,15 @@ public class RegionManagerImpl implements RegionManager {
         }      
     }
     
+    /**
+     * Returns region with given parameters.
+     *
+     * @param name of requested region.
+     * @param country country of requested region.
+     * @param year year of requested region.
+     * @param sex sex of requested region.
+     * @return regions with given parameters or null if such region does not exist.
+     */
     @Override
     public List<Region> findRegionsByParameters(String name, String country, String year, String sex){
         checkDataSource();

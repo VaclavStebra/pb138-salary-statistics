@@ -41,6 +41,12 @@ public class ClassificationManagerImpl implements ClassificationManager {
         }
     }
 
+    /**
+     * Stores new classification into database. Id for the new classification is automatically
+     * generated and stored into id attribute of classification.
+     *
+     * @param classification classification to be created.
+     */
     @Override
     public void createClassification(Classification classification) {
         checkDataSource();
@@ -84,6 +90,11 @@ public class ClassificationManagerImpl implements ClassificationManager {
         }
     }
 
+    /**
+     * Deletes classification from database.
+     *
+     * @param classification classification to be deleted from db.
+     */
     @Override
     public void deleteClassification(Classification classification) {
         checkDataSource();
@@ -118,6 +129,11 @@ public class ClassificationManagerImpl implements ClassificationManager {
         }
     }
 
+    /**
+     * Returns list of all rows in the database.
+     *
+     * @return list of all classifications in database.
+     */
     @Override
     public List<Classification> findAllClassifications() {
         checkDataSource();
@@ -137,6 +153,12 @@ public class ClassificationManagerImpl implements ClassificationManager {
         }  
     }
 
+    /**
+     * Returns classification with given id.
+     *
+     * @param id primary key of requested age.
+     * @return classification with given id or null if such classification does not exist.
+     */
     @Override
     public Classification findClassificationById(Long id) {
         if(cacheId.containsKey(id)){
@@ -170,6 +192,11 @@ public class ClassificationManagerImpl implements ClassificationManager {
         }
     }
 
+    /**
+     * Updates classification in database.
+     *
+     * @param classification updated classification to be stored into database.
+     */
     @Override
     public void updateClassification(Classification classification) {
         checkDataSource();
@@ -210,6 +237,14 @@ public class ClassificationManagerImpl implements ClassificationManager {
         }      
     }
     
+    /**
+     * Returns classifications with given parameters.
+     *
+     * @param name of requested age.
+     * @param country country of requested age.
+     * @param year year of requested age.
+     * @return classifications with given parameters or null if such classification does not exist.
+     */
     @Override
     public List<Classification> findClassificationsByParameters(String name, String country, String year){
         checkDataSource();

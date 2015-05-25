@@ -42,6 +42,12 @@ public class SectorManagerImpl implements SectorManager {
         }
     }
 
+    /**
+     * Stores new sector into database. Id for the new sector is automatically
+     * generated and stored into id attribute of sector.
+     *
+     * @param sector age to be created.
+     */
     @Override
     public void createSector(Sector sector) {
         checkDataSource();
@@ -85,6 +91,11 @@ public class SectorManagerImpl implements SectorManager {
         }
     }
 
+    /**
+     * Deletes sector from database.
+     *
+     * @param sector age to be deleted from db.
+     */
     @Override
     public void deleteSector(Sector sector) {
         checkDataSource();
@@ -119,6 +130,12 @@ public class SectorManagerImpl implements SectorManager {
         }
     }
 
+    
+    /**
+     * Returns list of all rows in the database.
+     *
+     * @return list of all sectors in database.
+     */
     @Override
     public List<Sector> findAllSectors() {
         checkDataSource();
@@ -138,6 +155,12 @@ public class SectorManagerImpl implements SectorManager {
         }  
     }
 
+    /**
+     * Returns sector with given id.
+     *
+     * @param id primary key of requested sector.
+     * @return sector with given id or null if such sector does not exist.
+     */
     @Override
     public Sector findSectorById(Long id) {
         if(cacheId.containsKey(id)){
@@ -171,6 +194,11 @@ public class SectorManagerImpl implements SectorManager {
         }
     }
 
+    /**
+     * Updates sector in database.
+     *
+     * @param sector updated sector to be stored into database.
+     */
     @Override
     public void updateSector(Sector sector) {
         checkDataSource();
@@ -212,6 +240,12 @@ public class SectorManagerImpl implements SectorManager {
         }      
     }
 
+    /**
+     * Returns sectors with given name.
+     *
+     * @param name of requested sector.
+     * @return sector with given name or null if such sector does not exist.
+     */
     @Override
     public List<Sector> findSectorsByName(String name) {
         if(cacheName.containsKey(name))
@@ -243,6 +277,16 @@ public class SectorManagerImpl implements SectorManager {
         }
     }
     
+    /**
+     * Returns sector with given parameters.
+     *
+     * @param ageFrom of requested sector.
+     * @param ageTo of requested sector.
+     * @param country country of requested sector.
+     * @param year year of requested sector.
+     * @param sex sex of requested sector.
+     * @return sectors with given parameters or null if such sector does not exist.
+     */
     @Override
     public List<Sector> findSectorsByParameters(String name, String country, String year){
         checkDataSource();

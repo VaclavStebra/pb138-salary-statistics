@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package xml;
+package xml.sk;
 
 import dao.Age;
 import dao.AgeManagerImpl;
@@ -40,7 +40,15 @@ import org.w3c.dom.Node;
  */
 public class Parser {
 
-    public void parseSectorSk(SectorManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
+    /**
+     * Parses SectorSk.xml.
+     *
+     * @param manager sector manager to store data
+     * @throws javax.xml.parsers.ParserConfigurationException
+     * @throws org.xml.sax.SAXException
+     * @throws java.io.IOException
+     */
+    public void parseSectorSk(SectorManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, ParseException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse("src/main/java/xml/SectorSk.xml");
@@ -83,7 +91,15 @@ public class Parser {
         }
     }
     
-    public void parseClassificationSk(ClassificationManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
+    /**
+     * Parses ClassificationSk.xml.
+     *
+     * @param manager classification manager to store data
+     * @throws javax.xml.parsers.ParserConfigurationException
+     * @throws org.xml.sax.SAXException
+     * @throws java.io.IOException
+     */
+    public void parseClassificationSk(ClassificationManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, ParseException {
         Map<String, String> nameMap = new HashMap<>();
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -174,6 +190,14 @@ public class Parser {
         }
     }
     
+    /**
+     * Parses EducationSk.xml.
+     *
+     * @param manager education manager to store data
+     * @throws javax.xml.parsers.ParserConfigurationException
+     * @throws org.xml.sax.SAXException
+     * @throws java.io.IOException
+     */
     public void parseEducationSk(EducationManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -223,6 +247,14 @@ public class Parser {
         }
     }
     
+    /**
+     * Parses AgeSk.xml.
+     *
+     * @param manager age manager to store data
+     * @throws javax.xml.parsers.ParserConfigurationException
+     * @throws org.xml.sax.SAXException
+     * @throws java.io.IOException
+     */
     public void parseAgeSk(AgeManagerImpl manager) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, ParseException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

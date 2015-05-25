@@ -40,7 +40,13 @@ public class AgeManagerImpl implements AgeManager {
             throw new IllegalStateException("DataSource is not set");
         }
     }
-
+    
+    /**
+     * Stores new age into database. Id for the new age is automatically
+     * generated and stored into id attribute of age.
+     *
+     * @param age age to be created.
+     */
     @Override
     public void createAge(Age age) {
         checkDataSource();
@@ -85,6 +91,11 @@ public class AgeManagerImpl implements AgeManager {
         }
     }
 
+    /**
+     * Deletes age from database.
+     *
+     * @param age age to be deleted from db.
+     */
     @Override
     public void deleteAge(Age age) {
         checkDataSource();
@@ -119,6 +130,11 @@ public class AgeManagerImpl implements AgeManager {
         }
     }
 
+    /**
+     * Returns list of all rows in the database.
+     *
+     * @return list of all ages in database.
+     */
     @Override
     public List<Age> findAllAges() {
         checkDataSource();
@@ -138,6 +154,12 @@ public class AgeManagerImpl implements AgeManager {
         }  
     }
 
+    /**
+     * Returns age with given id.
+     *
+     * @param id primary key of requested age.
+     * @return age with given id or null if such age does not exist.
+     */
     @Override
     public Age findAgeById(Long id) {
         if(cacheId.containsKey(id)){
@@ -171,6 +193,11 @@ public class AgeManagerImpl implements AgeManager {
         }
     }
 
+    /**
+     * Updates age in database.
+     *
+     * @param age updated age to be stored into database.
+     */
     @Override
     public void updateAge(Age age) {
         checkDataSource();
@@ -212,6 +239,16 @@ public class AgeManagerImpl implements AgeManager {
         }      
     }
     
+    /**
+     * Returns age with given parameters.
+     *
+     * @param ageFrom of requested age.
+     * @param ageTo of requested age.
+     * @param country country of requested age.
+     * @param year year of requested age.
+     * @param sex sex of requested age.
+     * @return ages with given parameters or null if such age does not exist.
+     */
     @Override
     public List<Age> findAgesByParameters(Integer ageFrom, Integer ageTo, String country, String year, String sex){
         checkDataSource();
