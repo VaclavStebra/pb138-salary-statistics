@@ -127,9 +127,20 @@ var showRegionDataBySex = function (data) {
                     }
                     return a.name > b.name;
                 });
-                for (var index in filteredBySex) {
-                    var entry = filteredBySex[index];
-                    serie.data.push(entry.averageSalary);
+                for (var y in years) {
+                    var year = years[y];
+                    var found = false;
+                    for (var i in filteredBySex) {
+                        var entry = filteredBySex[i];
+                        if (entry.year === year) {
+                            serie.data.push(entry.averageSalary);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        serie.data.push(null);
+                    }
                 }
                 if (serie.name === 'undefined') {
                     serie.name = 'spolu';
@@ -207,9 +218,20 @@ var showRegionDataByYearAndSex = function (data) {
                     }
                     return a.name > b.name;
                 });
-                for (var index in filteredByName) {
-                    var entry = filteredByName[index];
-                    serie.data.push(entry.averageSalary);
+                for (var y in years) {
+                    var year = years[y];
+                    var found = false;
+                    for (var i in filteredByName) {
+                        var entry = filteredByName[i];
+                        if (entry.year === year) {
+                            serie.data.push(entry.averageSalary);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        serie.data.push(null);
+                    }
                 }
             }
 
